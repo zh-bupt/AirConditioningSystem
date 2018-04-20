@@ -82,9 +82,10 @@ void Server_MainWindow::on_pushButton_Listen_clicked()
     }
     else
     {
-        if(socket->state() == QAbstractSocket::ConnectedState)
+        if(socket != Q_NULLPTR)
         {
-            socket->disconnectFromHost();
+            if(socket->state() == QAbstractSocket::ConnectedState)
+                socket->disconnectFromHost();
         }
         server->close();
         ui->pushButton_Listen->setText("侦听");
