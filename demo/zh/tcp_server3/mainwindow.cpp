@@ -2,7 +2,6 @@
 #include "ui_mainwindow.h"
 #include <QList>
 #include <QtNetwork>
-#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -15,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
         close();
         return;
     }
-
 
     qDebug() << server->serverAddress() << ":" << server->serverPort();
 
@@ -40,4 +38,14 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_broadcastBtn_clicked()
+{
+    server->broadCast();
+}
+
+void MainWindow::on_sendBtn_clicked()
+{
+    server->send("123");
 }

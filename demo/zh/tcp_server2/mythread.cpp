@@ -1,6 +1,6 @@
 #include "mythread.hpp"
 
-myThread::myThread(qintptr socketDescriptor, QObject *parent)
+myThread::myThread(qintptr socketDescriptor, QObject *parent) : QThread(parent)
 {
     this->socketDescriptor = socketDescriptor;
     socket = new QTcpSocket;

@@ -3,6 +3,7 @@
 
 #include <QThread>
 #include <QTcpSocket>
+#include <QRunnable>
 
 class myThread : public QThread
 {

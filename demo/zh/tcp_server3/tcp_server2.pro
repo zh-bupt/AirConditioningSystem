@@ -30,14 +30,14 @@ SOURCES += \
     myserver.cpp \
     mythread.cpp \
     processor.cpp \
-    mythreadpool.cpp
+    threadpool.cpp
 
 HEADERS += \
         mainwindow.hpp \
     myserver.hpp \
     mythread.hpp \
     processor.hpp \
-    mythreadpool.hpp
+    threadpool.hpp
 
 FORMS += \
         mainwindow.ui

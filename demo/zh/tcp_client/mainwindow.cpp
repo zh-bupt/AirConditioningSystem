@@ -27,6 +27,7 @@ void MainWindow::init()
 void MainWindow::receiveData()
 {
     QString data = socket->readAll();
+    qDebug() << data;
     this->ui->lineEdit->setText(data);
 }
 
@@ -42,7 +43,8 @@ void MainWindow::displayError(QAbstractSocket::SocketError)
     socket->close();
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_send_btn_clicked()
 {
+    qDebug() << "send";
     socket->write(ui->lineEdit->text().toUtf8());
 }
