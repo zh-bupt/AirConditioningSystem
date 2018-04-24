@@ -5,24 +5,25 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <mythread.hpp>
-#include <QMap>
+#include <QHash>
 #include "threadpool.hpp"
 
 class myServer : public QTcpServer
 {
 public:
-    myServer(QObject *parent);
-    void broadCast();
-    void send(QString id);
+    static myServer* getGlobalInstance();
+    void broadCast(QString info);
+    void send(QString id, QString info);
+    void addSocket(QString id, QTcpSocket *socket);
+    void deleteSocket(QTcpSocket *socket);
 
 protected:
     void incomingConnection(qintptr socketDescriptor) override;
-private slots:
-    void addSocket(QString id, QTcpSocket *socket);
-    void deleteSocket(QString id);
-    void login();
+
 private:
-    QMap<QString, QTcpSocket*> socketMap;
+    myServer();
+    static myServer* server;
+    QHash<QString, QTcpSocket*> socketMap;
     QTcpSocket *socket;
     Threadpool *pool = nullptr;
 };

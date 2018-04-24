@@ -2,20 +2,18 @@
 #include "ui_mainwindow.h"
 #include <QList>
 #include <QtNetwork>
-#include <QLabel>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    server = new myServer(this);
+    server = myServer::getGlobalInstance();
     if (!server->listen(QHostAddress::LocalHost, 6666))
     {
         close();
         return;
     }
-
 
     qDebug() << server->serverAddress() << ":" << server->serverPort();
 
@@ -40,4 +38,17 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::on_broadcastBtn_clicked()
+{
+    QString info = ui->infoTe->toPlainText();
+    server->broadCast(info);
+}
+
+void MainWindow::on_sendBtn_clicked()
+{
+    QString id = ui->idLe->text();
+    QString info = ui->infoTe->toPlainText();
+    server->send(id, info);
 }
