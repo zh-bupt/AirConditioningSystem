@@ -1,9 +1,17 @@
 #include "myserver.hpp"
 #include "processor.hpp"
 
-myServer::myServer(QObject *parent) : QTcpServer(parent)
+myServer* myServer::server = nullptr;
+
+myServer::myServer() : QTcpServer(nullptr)
 {
     pool = new Threadpool();
+}
+
+myServer* myServer::getGlobalInstance()
+{
+    if(!server) server = new myServer();
+    return server;
 }
 
 void myServer::incomingConnection(qintptr socketDescriptor)
@@ -31,26 +39,30 @@ void myServer::addSocket(QString id, QTcpSocket *socket)
     socketMap.insert(id, socket);
 }
 
-void myServer::deleteSocket(QString id)
+void myServer::deleteSocket(QTcpSocket *socket)
 {
-    socketMap.remove(id);
-}
-
-void myServer::login()
-{
-    QString id = socket->readAll();
-    socketMap.insert(id, socket);
-    disconnect(socket, SIGNAL(readyRead()), this, SLOT(login()));
-}
-
-void myServer::broadCast()
-{
-    foreach (QTcpSocket *socket, socketMap) {
-        socket->write(QString("Broadcast info!").toUtf8());
+    for(auto it =  socketMap.begin(); it != socketMap.end(); it++)
+    {
+        if(it.value() == socket){
+            socketMap.remove(it.key());
+            break;
+        }
     }
 }
 
-void myServer::send(QString id)
+
+void myServer::broadCast(QString info)
 {
-    if (socketMap.contains(id)) socketMap.value(id)->write(QString("Targeted info!").toUtf8());
+    if (!info.isEmpty()){
+        foreach (QTcpSocket *socket, socketMap) {
+            socket->write(info.toUtf8());
+        }
+    }
+}
+
+void myServer::send(QString id, QString info)
+{
+    if (!info.isEmpty()){
+        if (socketMap.contains(id)) socketMap.value(id)->write(info.toUtf8());
+    }
 }

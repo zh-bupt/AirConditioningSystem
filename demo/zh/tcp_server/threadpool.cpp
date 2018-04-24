@@ -1,6 +1,7 @@
 #include "threadpool.hpp"
 #include <mythread.hpp>
 #include <QTcpSocket>
+#include "myserver.hpp"
 
 Threadpool::Threadpool(QObject *parent) : QObject(parent)
 {
@@ -33,6 +34,7 @@ void Threadpool::giveBack()
         myThread *thread = busy.value(socket);
         free_queue.enqueue(thread);
         busy.remove(socket);
+        myServer::getGlobalInstance()->deleteSocket(socket);
     } else {
         qDebug() << "No such socket!";
     }

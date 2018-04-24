@@ -1,5 +1,7 @@
 #include "mainwindow.hpp"
 #include "ui_mainwindow.h"
+#include <QJsonObject>
+#include <QJsonDocument>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -27,8 +29,7 @@ void MainWindow::init()
 void MainWindow::receiveData()
 {
     QString data = socket->readAll();
-    qDebug() << data;
-    this->ui->lineEdit->setText(data);
+    ui->infoTb->setText(data);
 }
 
 void MainWindow::newConnect()
@@ -43,8 +44,22 @@ void MainWindow::displayError(QAbstractSocket::SocketError)
     socket->close();
 }
 
-void MainWindow::on_send_btn_clicked()
+void MainWindow::on_loginBtn_clicked()
 {
-    qDebug() << "send";
-    socket->write(ui->lineEdit->text().toUtf8());
+    QString id = ui->idLe->text();
+    QString password = ui->pwLe->text();
+    login(id, password);
+}
+
+void MainWindow::login(QString id, QString password)
+{
+    QJsonObject obj;
+    obj.insert("type", "login");
+    obj.insert("id", id);
+    obj.insert("password", password);
+
+    QJsonDocument document;
+    document.setObject(obj);
+    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
+    socket->write(byteArray);
 }

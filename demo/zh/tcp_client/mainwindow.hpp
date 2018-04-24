@@ -19,9 +19,10 @@ private slots:
     void receiveData();
     void displayError(QAbstractSocket::SocketError);
 
-    void on_send_btn_clicked();
+    void on_loginBtn_clicked();
 
 private:
+    void login(QString id, QString password);
     void init();
     void newConnect();
     Ui::MainWindow *ui;
