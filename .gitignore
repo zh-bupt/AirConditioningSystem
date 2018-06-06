@@ -44,3 +44,7 @@ CMakeLists.txt.user*
 
 #Mac Files
 *.DS_Store
+
+/server/out
+/server/.idea
+/server/*.iml

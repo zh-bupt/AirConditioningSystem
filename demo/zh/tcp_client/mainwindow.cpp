@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <string>
+#include <QDebug>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -29,6 +32,7 @@ void MainWindow::init()
 void MainWindow::receiveData()
 {
     QString data = socket->readAll();
+    qDebug() << data << '\n';
     ui->infoTb->setText(data);
 }
 
@@ -55,11 +59,27 @@ void MainWindow::login(QString id, QString password)
 {
     QJsonObject obj;
     obj.insert("type", "login");
-    obj.insert("id", id);
-    obj.insert("password", password);
+    obj.insert("room_id", id);
+    obj.insert("id", password);
 
     QJsonDocument document;
     document.setObject(obj);
-    QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-    socket->write(byteArray);
+    std::string byteArray = document.toJson(QJsonDocument::Compact).toStdString();
+    std::string head = getHead(byteArray.length());
+    std::string data = head + byteArray;
+    qDebug() << QString::fromStdString(data);
+    socket->write(QString::fromStdString(data).toUtf8());
+}
+
+std::string MainWindow::getHead(int length) {
+    if (length > 9999) return "9999";
+    if (length <= 0) return "0000";
+    std::string result = "0000";
+    int i = 3;
+    while(length > 0) {
+        result[i] = '0' + length % 10;
+        length = length / 10;
+        i--;
+    }
+    return result;
 }

@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <qtcpsocket.h>
+#include <string>
 
 namespace Ui {
 class MainWindow;
@@ -15,6 +16,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    static std::string getHead(int length);
+
 private slots:
     void receiveData();
     void displayError(QAbstractSocket::SocketError);
