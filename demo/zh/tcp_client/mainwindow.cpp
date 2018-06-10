@@ -33,7 +33,7 @@ void MainWindow::receiveData()
 {
     QString data = socket->readAll();
     qDebug() << data << '\n';
-    ui->infoTb->setText(data);
+//    ui->infoTb->setText(data);
 }
 
 void MainWindow::newConnect()
@@ -82,4 +82,11 @@ std::string MainWindow::getHead(int length) {
         i--;
     }
     return result;
+}
+
+void MainWindow::on_pushButton_clicked()
+{
+    std::string str = ui->infoTB->toPlainText().toStdString();
+    str = getHead(str.length()) + str;
+    socket->write(QString::fromStdString(str).toUtf8());
 }

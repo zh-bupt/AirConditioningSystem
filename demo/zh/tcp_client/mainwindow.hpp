@@ -24,6 +24,8 @@ private slots:
 
     void on_loginBtn_clicked();
 
+    void on_pushButton_clicked();
+
 private:
     void login(QString id, QString password);
     void init();

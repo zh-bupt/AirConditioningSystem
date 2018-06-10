@@ -47,27 +47,17 @@
      </rect>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="infoTb">
-    <property name="geometry">
-     <rect>
-      <x>110</x>
-      <y>80</y>
-      <width>256</width>
-      <height>141</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
       <x>20</x>
       <y>10</y>
-      <width>60</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>ID:</string>
+     <string>room num:</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -83,7 +73,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>Password:</string>
+     <string>id:</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -97,6 +87,29 @@
     </property>
     <property name="text">
      <string>Information:</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>120</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>send</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="infoTB">
+    <property name="geometry">
+     <rect>
+      <x>130</x>
+      <y>100</y>
+      <width>231</width>
+      <height>121</height>
+     </rect>
     </property>
    </widget>
   </widget>

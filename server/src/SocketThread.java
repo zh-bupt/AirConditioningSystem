@@ -32,7 +32,8 @@ public class SocketThread implements Runnable {
                     if (result != length) continue;
                     if (result == -1) break;
                     String jsonString = new String(dataBuf);
-                    Processor.getInstance().runTask(TaskFactory.getTask(jsonString, socket));
+                    CustomerFacade.getInstance().handleRequest(jsonString, socket);
+//                    Processor.getInstance().runTask(TaskFactory.getTask(jsonString, socket));
                 } catch (NumberFormatException e){
                     byte[] dataBuf = new byte[1024];
                     din.read(dataBuf);
@@ -47,7 +48,8 @@ public class SocketThread implements Runnable {
                 ins.close();
                 outs.close();
                 socket.close();
-                TCPServer.removeSocket(socket);
+                TCPServer.getInstance().removeSocket(socket);
+                CustomerManager.getInstance().removeCustomer(socket);
             } catch (IOException e) {
                 e.printStackTrace();
             }
