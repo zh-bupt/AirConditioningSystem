@@ -1,11 +1,20 @@
 package simpleclass;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.sql.Time;
+
+/*
+ * Request: 温控请求类，包含一次温控请求恩基本信息
+ */
 public class Request {
     private String roomId = null;
     private String startTime  = null;
     private String stopTime = null;
     private int startTemp;
     private int endTemp;
+    private int targetTemp;
     private String windPower = null;
     private float cost;
 
@@ -15,6 +24,12 @@ public class Request {
         this.startTime = startTime;
         this.startTemp = startTemp;
         this.windPower = windPower;
+    }
+    // TODO: 时间的确定，是使用实际时间还是模拟时间
+    public Request(JSONObject jsonObject, String roomId) throws JSONException {
+        this.roomId = roomId;
+        this.startTemp = jsonObject.getInt("current_tmp");
+        this.targetTemp = jsonObject.getInt("target_tmp");
     }
 
     public void setEndTemp(int endTemp) {

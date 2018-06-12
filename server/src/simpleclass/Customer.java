@@ -3,6 +3,9 @@ package simpleclass;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/*
+* Customer: 住客类，有住客的基本信息
+*/
 public class Customer {
     private String room_id = null;
     private String id = null;

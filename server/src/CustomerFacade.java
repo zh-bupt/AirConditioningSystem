@@ -5,6 +5,10 @@ import simpleclass.Customer;
 
 import java.net.Socket;
 
+/*
+* CustomerFacade: 住客请求的外观类(单例模式)
+* 根据socket提交的请求, 调用相应的处理类
+ */
 public class CustomerFacade {
 
     private static CustomerFacade customerFacade = null;
@@ -15,6 +19,11 @@ public class CustomerFacade {
         return customerFacade;
     }
 
+    /*
+     * @Description handleRequest 处理相应的请求
+     * @param request 请求的字符串
+     * @param socket 发起请求的socket
+     */
     public void handleRequest(String request, Socket socket) {
         try {
             JSONObject jsonObject = new JSONObject(request);

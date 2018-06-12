@@ -3,12 +3,15 @@ package simpleclass;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
+/*
+ * RoomState: 房间状态类，包含一个房间的温度信息等
+ */
 public class RoomState {
     private String roomId = null;
     private int currentTemperature;
     private int targetTemperature;
     private String wind_power = null;
+    private boolean isOn = false;
 
     public RoomState(JSONObject jsonObject, String roomId) throws JSONException {
         this.roomId = roomId;

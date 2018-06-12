@@ -5,6 +5,11 @@ import java.net.Socket;
 public class LoginTask extends BaseTask {
     private Customer customer = null;
 
+    /*
+     * @Description LoginTask
+     * @Param
+     * @Return
+     */
     public LoginTask(Customer customer, Socket socket) {
         super(socket);
         this.customer = customer;

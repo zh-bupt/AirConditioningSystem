@@ -25,4 +25,13 @@ public class StateManager {
             else stateMap.put(roomId, state);
         }
     }
+
+    public RoomState removeRoom(String room_id) {
+        RoomState state = stateMap.remove(room_id);
+        return state;
+    }
+
+    public Map<String, RoomState> getStateMap() {
+        return stateMap;
+    }
 }

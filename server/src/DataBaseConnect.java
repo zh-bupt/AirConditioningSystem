@@ -1,4 +1,8 @@
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class DataBaseConnect {
     private static String user = "sa";
@@ -7,13 +11,14 @@ public class DataBaseConnect {
     private static String address = "//localhost:1433";
     private static String driver = "jdbc:sqlserver";
 
-
+    /*
+     * @Description 获得数据库连接
+     * @Param void
+     * @Return Connection 数据库连接
+     */
     public static Connection getConnection() {
-//        String connectionUrl = "jdbc:sqlserver://localhost:1433;" +
-//                "databaseName=HotelSystem;";
         String connectionUrl = driver + ":" + address + ";" + "databaseName=" + database;
 
-        // Declare the JDBC objects.
         Connection con = null;
         try {
             // Establish the connection.
@@ -26,21 +31,43 @@ public class DataBaseConnect {
         }
     }
 
-    public static ResultSet query(String querySQL) {
+    /*
+     * @Description 获取查询语句的结果, 存储在 ArrayList 中
+     * @Param querySQL SQL语句
+     * @Return ArrayList<HashMap<String, String>> 查询结果
+     */
+    public static ArrayList<HashMap<String, String>> query(String querySQL) {
         Connection con = getConnection();
         Statement stmt = null;
         ResultSet rs = null;
+        ArrayList<HashMap<String, String>> resultList = null;
+                new ArrayList<HashMap<String, String>>();
         if (con != null) {
             try {
+                resultList = new ArrayList<HashMap<String, String>>();
                 stmt = con.createStatement();
                 rs = stmt.executeQuery(querySQL);
-                return rs;
+                ResultSetMetaData metaData = rs.getMetaData();
+                while (rs.next()) {
+                    HashMap<String, String> tuple = new HashMap<>();
+                    for (int i = 1; i <= metaData.getColumnCount(); ++i) {
+                        String columnName = metaData.getColumnName(i);
+                        String data = rs.getString(i);
+                        System.out.println(columnName + ":" + data);
+                        tuple.put(columnName, data);
+                    }
+                    resultList.add(tuple);
+                }
+                return resultList;
+            } catch (SQLServerException e) {
+                e.printStackTrace();
             } catch (SQLException e) {
                 e.printStackTrace();
                 return null;
-            }finally {
-//                if (stmt != null) try { stmt.close(); } catch(Exception e) {}
-//                if (con != null) try { con.close(); } catch(Exception e) {}
+            } finally {
+                if (rs != null) try { rs.close(); } catch(Exception e) {}
+                if (stmt != null) try { stmt.close(); } catch(Exception e) {}
+                if (con != null) try { con.close(); } catch(Exception e) {}
             }
         }
         return null;
