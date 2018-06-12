@@ -1,5 +1,4 @@
-import org.json.JSONObject;
-
+import javax.management.InvalidAttributeValueException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -22,46 +21,7 @@ public class TCPServer implements Runnable{
         return tcpServer;
     }
 
-    private TCPServer() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                int seq = 0;
-//                try {
-//                    while (true) {
-//                        Map<String, Object> map = new HashMap<>();
-//                        map.put("type", "state_query");
-//                        map.put("seq", seq++);
-//                        Thread.sleep(1000);
-//                        broadCast(StringUtils.getSendString(map));
-////                        System.out.println("Send state query info");
-//                    }
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }).start();
-//
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                int seq = 0;
-//                while (true) {
-//                    try {
-//                        Thread.sleep(2000);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    Map<String, Object> map = new HashMap<>();
-//                    map.put("type", "bill");
-//                    map.put("seq", seq++);
-//                    map.put("power", 123);
-//                    map.put("money", 12.22);
-//                    broadCast(StringUtils.getSendString(map));
-//                }
-//            }
-//        }).start();
-    }
+    private TCPServer() {}
 
     @Override
     public void run() {
@@ -107,9 +67,9 @@ public class TCPServer implements Runnable{
         }
     }
 
-    public void broadCast(String data) {
-        for (Socket s:socketList) {
-            sendData(s, data);
-        }
-    }
+//    public void broadCast(String data) {
+//        for (Socket s:socketList) {
+//            sendData(s, data);
+//        }
+//    }
 }
