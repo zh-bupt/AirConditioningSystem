@@ -49,7 +49,6 @@ public class SocketThread implements Runnable {
                 outs.close();
                 socket.close();
                 TCPServer.getInstance().removeSocket(socket);
-                CustomerManager.getInstance().removeCustomer(socket);
             } catch (IOException e) {
                 e.printStackTrace();
             }

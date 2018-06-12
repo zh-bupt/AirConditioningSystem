@@ -3,8 +3,8 @@ import simpleclass.Customer;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,14 +45,10 @@ public class CustomerManager {
     private boolean isRegistered(Customer customer) {
         String roomId = customer.getRoom_id();
         String id = customer.getId();
-        ResultSet result = DataBaseConnect.
+        ArrayList<HashMap<String, String>> result = DataBaseConnect.
                 query("select id from customer where room_id = " + "'" + roomId + "'");
-        try {
-            if (result != null && result.next() && id.equals(result.getString(1)))
+        if (result != null && id.equals(result.get(0).get("id")))
                 return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
         return false;
     }
 
@@ -61,7 +57,9 @@ public class CustomerManager {
     }
 
     public String removeCustomer(Socket socket) {
-        return customerMap.remove(socket);
+        String room_id = customerMap.remove(socket);
+        StateManager.getInstance().removeRoom(room_id);
+        return room_id;
     }
 
 }

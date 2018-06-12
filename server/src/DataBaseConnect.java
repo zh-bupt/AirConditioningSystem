@@ -1,4 +1,7 @@
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataBaseConnect {
     private static String user = "sa";
@@ -26,21 +29,36 @@ public class DataBaseConnect {
         }
     }
 
-    public static ResultSet query(String querySQL) {
+    public static ArrayList<HashMap<String, String>> query(String querySQL) {
         Connection con = getConnection();
         Statement stmt = null;
         ResultSet rs = null;
+        ArrayList<HashMap<String, String>> resultList = null;
+                new ArrayList<HashMap<String, String>>();
         if (con != null) {
             try {
+                resultList = new ArrayList<HashMap<String, String>>();
                 stmt = con.createStatement();
                 rs = stmt.executeQuery(querySQL);
-                return rs;
+                ResultSetMetaData metaData = rs.getMetaData();
+                while (rs.next()) {
+                    HashMap<String, String> tuple = new HashMap<>();
+                    for (int i = 1; i <= metaData.getColumnCount(); ++i) {
+                        String columnName = metaData.getColumnName(i);
+                        String data = rs.getString(i);
+                        System.out.println(columnName + ":" + data);
+                        tuple.put(columnName, data);
+                    }
+                    resultList.add(tuple);
+                }
+                return resultList;
             } catch (SQLException e) {
                 e.printStackTrace();
                 return null;
             }finally {
-//                if (stmt != null) try { stmt.close(); } catch(Exception e) {}
-//                if (con != null) try { con.close(); } catch(Exception e) {}
+                if (rs != null) try { rs.close(); } catch(Exception e) {}
+                if (stmt != null) try { stmt.close(); } catch(Exception e) {}
+                if (con != null) try { con.close(); } catch(Exception e) {}
             }
         }
         return null;

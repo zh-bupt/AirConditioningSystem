@@ -9,6 +9,7 @@ public class RoomState {
     private int currentTemperature;
     private int targetTemperature;
     private String wind_power = null;
+    private boolean isOn = false;
 
     public RoomState(JSONObject jsonObject, String roomId) throws JSONException {
         this.roomId = roomId;

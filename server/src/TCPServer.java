@@ -90,8 +90,10 @@ public class TCPServer implements Runnable{
     }
 
     public void removeSocket(Socket socket) {
-        if (socketList.remove(socket))
+        if (socketList.remove(socket)) {
+            CustomerManager.getInstance().removeCustomer(socket);
             clientCount--;
+        }
     }
 
     public void sendData(Socket socket, String data) {
