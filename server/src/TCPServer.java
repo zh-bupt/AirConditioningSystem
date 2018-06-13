@@ -59,16 +59,10 @@ public class TCPServer implements Runnable{
         try{
             System.out.println("send to" + socket.toString());
             PrintWriter writer=new PrintWriter(socket.getOutputStream());
-            writer.print(data);
+            writer.print(StringUtils.getHead(data.length()) + data);
             writer.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
-//    public void broadCast(String data) {
-//        for (Socket s:socketList) {
-//            sendData(s, data);
-//        }
-//    }
 }

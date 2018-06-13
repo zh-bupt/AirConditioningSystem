@@ -2,6 +2,8 @@ package simpleclass;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 /*
@@ -30,6 +32,8 @@ public class Request {
         this.roomId = roomId;
         this.startTemp = jsonObject.getInt("current_tmp");
         this.targetTemp = jsonObject.getInt("target_tmp");
+        this.windPower = jsonObject.getString("wind_power");
+        this.startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 
     public void setEndTemp(int endTemp) {
@@ -58,5 +62,9 @@ public class Request {
 
     public String getWindPower() {
         return windPower;
+    }
+
+    public String getRoomId() {
+        return roomId;
     }
 }

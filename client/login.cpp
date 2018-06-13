@@ -35,7 +35,7 @@ void Login::init()
 void Login::connectServer()
 {
     tcpSocket->abort();   //取消已有的连接
-    tcpSocket->connectToHost(QHostAddress("127.0.0.0"),6666);
+    tcpSocket->connectToHost(QHostAddress("127.0.0.1"),6666);
     connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readMessages()));
 }
 void Login::on_login_clicked()
@@ -55,7 +55,7 @@ void Login::on_login_clicked()
        std::string data = QString(simpbyte_array).toStdString();
        std::string login_sent= Header::getHead(data.length())+data;
        qDebug() << "简单的QTJson数据：" << QString::fromStdString(login_sent);
-       tcpSocket->write(QString::fromStdString(data).toUtf8());
+       tcpSocket->write(QString::fromStdString(login_sent).toUtf8());
     /*if(ui->account_number_in->text().trimmed() == tr("sjw") &&
              ui->password_in->text().trimmed() == tr("123456"))
       {
@@ -97,6 +97,9 @@ void Login::readMessages()
 {
     QString data=tcpSocket->readAll();
    // std::string data=tcpSocket->readAll();
+    qDebug() << data;
+    data = data.mid(4);
+    qDebug() << data;
     QJsonParseError simp_json_error;
     QString type,result;
              // std::string data1=QString(QString::fromStdString((data)).toUtf8()).toStdString();

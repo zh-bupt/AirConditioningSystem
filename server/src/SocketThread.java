@@ -36,6 +36,7 @@ public class SocketThread implements Runnable {
                 } catch (NumberFormatException e){
                     byte[] dataBuf = new byte[1024];
                     din.read(dataBuf);
+                    System.out.println(dataBuf);
                     System.out.println("NumberFormatException");
                 }
             }

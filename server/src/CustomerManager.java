@@ -8,6 +8,8 @@ import java.util.*;
 
 public class CustomerManager implements Observer {
     private static CustomerManager customerManager = null;
+
+    // 当前连接在服务器上的用户的map, key为socket, value为room_id
     private Map<Socket, String> customerMap = new HashMap<>();
     private int querySeq = 0;
     private int billSeq = 0;
@@ -74,7 +76,7 @@ public class CustomerManager implements Observer {
         String id = customer.getId();
         ArrayList<HashMap<String, String>> result = DataBaseConnect.
                 query("select id from customer where room_id = " + "'" + roomId + "'");
-        if (result != null && id.equals(result.get(0).get("id")))
+        if (result != null && result.size() != 0 && id.equals(result.get(0).get("id")))
                 return true;
         return false;
     }
@@ -130,5 +132,14 @@ public class CustomerManager implements Observer {
             billSeq++;
             System.out.println("Send bill info");
         }
+    }
+
+    /*
+     * @Description getCustomerMap 返回用户的map, key为socket, value为room_id
+     * @Param
+     * @Return Map<Socket, String>
+     */
+    public Map<Socket, String> getCustomerMap() {
+        return customerMap;
     }
 }

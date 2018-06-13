@@ -19,4 +19,8 @@ public class RoomState {
         this.targetTemperature = jsonObject.getInt("target_tmp");
         this.wind_power = jsonObject.getString("wind_power");
     }
+
+    public int getCurrentTemperature() {
+        return currentTemperature;
+    }
 }

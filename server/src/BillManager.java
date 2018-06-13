@@ -10,8 +10,13 @@ public class BillManager implements Observer {
             new HashMap<>();
 
     private static BillManager billManager = null;
+    private float high;
+    private float medium;
+    private float low;
     private BillManager() {
-
+        this.high = (float) 1.3;
+        this.medium = (float) 1.0;
+        this.low = (float) 0.8;
     }
 
     public static BillManager getInstance() {
@@ -35,23 +40,28 @@ public class BillManager implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        System.out.println("update bill");
+//        System.out.println("update bill");
         for (String room_id : billMap.keySet()) {
             Request request = RequestManager.getInstance().getRequest(room_id);
             if (request == null) continue;
             String wind_power = request.getWindPower();
             Float pre = billMap.get(room_id), cur;
             if (wind_power == "high") {
-                cur = Float.valueOf(pre.floatValue() + (float) (0.8 / 60));
+                cur = Float.valueOf(pre.floatValue() + low / 60);
             } else if (wind_power == "medium") {
-                cur = Float.valueOf(pre.floatValue() + (float) (1.0 / 60));
+                cur = Float.valueOf(pre.floatValue() + medium / 60);
             } else {
-                cur = Float.valueOf(pre.floatValue() + (float) (1.3 / 60));
+                cur = Float.valueOf(pre.floatValue() + high / 60);
             }
             billMap.replace(room_id, cur);
         }
     }
 
+    /*
+     * @Description getBillMap 得到所有房间的账单信息
+     * @Param
+     * @Return HashMao<String, Float> 所有房间账单信息
+     */
     public HashMap<String, Float> getBillMap() {
         return billMap;
     }
