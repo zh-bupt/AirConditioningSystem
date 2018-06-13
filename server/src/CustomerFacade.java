@@ -1,8 +1,6 @@
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.stjs.javascript.JSON;
 import simpleclass.Customer;
-
 import java.net.Socket;
 
 /*

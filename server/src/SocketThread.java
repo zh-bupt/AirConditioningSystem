@@ -33,7 +33,6 @@ public class SocketThread implements Runnable {
                     if (result == -1) break;
                     String jsonString = new String(dataBuf);
                     CustomerFacade.getInstance().handleRequest(jsonString, socket);
-//                    Processor.getInstance().runTask(TaskFactory.getTask(jsonString, socket));
                 } catch (NumberFormatException e){
                     byte[] dataBuf = new byte[1024];
                     din.read(dataBuf);

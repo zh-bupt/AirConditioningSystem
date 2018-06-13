@@ -31,7 +31,7 @@ public class StateManager {
         return state;
     }
 
-    public Map<String, RoomState> getStateMap() {
+    public Map<String, RoomState> getState() {
         return stateMap;
     }
 }

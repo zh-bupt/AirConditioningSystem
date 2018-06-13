@@ -5,9 +5,11 @@ import simpleclass.Request;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.HashMap;
 
 public class RequestManager {
     private static RequestManager requestManager = null;
+    private HashMap<String, Request> requestHashMap = new HashMap<>();
 
     private RequestManager(){}
 
@@ -27,6 +29,8 @@ public class RequestManager {
                     int seq = jsonObject.getInt("seq");
                     String ack;
                     if (isValid(request)) {
+                        String room_id = CustomerManager.getInstance().getRoomId(socket);
+                        requestHashMap.put(room_id, request);
                         ack  = "{"
                                 + "\"type\":\"wind_request_ack\","
                                 + "\"accept\":1,"
@@ -54,4 +58,11 @@ public class RequestManager {
     private boolean isValid(Request request){
         return true;
     }
+
+    public Request removeRequest(String room_id) {
+        if (requestHashMap.containsKey(room_id)) return requestHashMap.remove(room_id);
+        return null;
+    }
+
+    public Request getRequest(String room_id) { return requestHashMap.get(room_id); }
 }

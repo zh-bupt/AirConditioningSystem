@@ -1,26 +1,19 @@
 import org.json.JSONObject;
 import simpleclass.Customer;
 
-import javax.management.InvalidAttributeValueException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-public class CustomerManager {
+public class CustomerManager implements Observer {
     private static CustomerManager customerManager = null;
     private Map<Socket, String> customerMap = new HashMap<>();
+    private int querySeq = 0;
+    private int billSeq = 0;
 
 
     private CustomerManager(){
-        try {
-            CycleTask cycleTask = new CycleTask(5, 2);
-            new Thread(cycleTask).start();
-        } catch (InvalidAttributeValueException e) {
-            e.printStackTrace();
-        }
     }
 
     public static CustomerManager getInstance() {
@@ -42,7 +35,16 @@ public class CustomerManager {
                     printWriter = new PrintWriter(socket.getOutputStream());
                     String ack;
                     if (isRegistered(customer)) {
-                        customerMap.put(socket, customer.getRoom_id());
+                        Socket s = getSocketKey(customer.getRoom_id());
+                        if (s == null)
+                            customerMap.put(socket, customer.getRoom_id());
+                        else {
+                            customerMap.remove(s);
+                            s.close();
+                            customerMap.put(socket, customer.getRoom_id());
+                        }
+                        // TODO 改成观察者模式, 这里仅测试用
+                        BillManager.getInstance().addBill(customer.getRoom_id());
                         ack = "{\"type\":\"login_ack\",\"result\":\"succeed\"}";
                         System.out.println("Welcome customer " + customer.getId() + " in room " + customer.getRoom_id());
                         System.out.println("Login succeeded!");
@@ -81,86 +83,52 @@ public class CustomerManager {
         return customerMap.get(socket);
     }
 
+    private Socket getSocketKey(String room_id) {
+        for (Socket s : customerMap.keySet()) {
+            if (customerMap.get(s).equals(room_id)) return s;
+        }
+        return null;
+    }
+
     public String removeCustomer(Socket socket) {
         String room_id = customerMap.remove(socket);
         StateManager.getInstance().removeRoom(room_id);
         return room_id;
     }
 
-    class CycleTask implements Runnable{
-        private int queryInterval;
-        private int billInterval;
-
-        public CycleTask(int queryInterval, int billInterval) throws InvalidAttributeValueException {
-            if (queryInterval <= 0 || queryInterval > 59)
-                throw new InvalidAttributeValueException("Query interval should between 1 and 59");
-            if (billInterval <= 0 || billInterval > 59)
-                throw new InvalidAttributeValueException("Bill interval should between 1 and 59");
-            this.queryInterval = queryInterval;
-            this.billInterval = billInterval;
-        }
-
-        private int[][] getScheduleTable() {
-            int table[][] = new int[2][60];
-            for (int i = 0; i < 60; ++i) {
-                if (i % queryInterval == 0) table[0][i] = 1;
-                else table[0][i] = 0;
-                if (i % billInterval == 0) table[1][i] = 1;
-                else table[1][i] = 0;
-            }
-            return table;
-        }
-
-        private void broadCast(String query) {
-            for (Socket socket : customerMap.keySet()) {
-                TCPServer.getInstance().sendData(socket, query);
-            }
-        }
-
-//        private void seedData(Socket socket, String data) {
-//            try{
-//                System.out.println("send to" + socket.toString());
-//                PrintWriter writer=new PrintWriter(socket.getOutputStream());
-//                writer.print(data);
-//                writer.flush();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        @Override
-        public void run() {
-            int[][] table = getScheduleTable();
-            int index = 0;
-            int querySeq = 0, billSeq = 0;
-            while(true) {
-                if (table[0][index] == 1) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("type", "state_query");
-                    map.put("seq", querySeq++);
-                    String query = new JSONObject(map).toString();
-                    broadCast(query);
-                    System.out.println("Send state query info");
-                }
-                if (table[1][index] == 1) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("type", "bill");
-                    map.put("seq", billSeq++);
-                    map.put("power", 123);
-                    map.put("money", 12.22);
-                    // TODO 添加广播用户账单信息
-                    String bill = new JSONObject(map).toString();
-                    broadCast(bill);
-                    System.out.println("Send bill info");
-                }
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                index = (index + 1) % 60;
-            }
+    private void broadCast(String query) {
+        for (Socket socket : customerMap.keySet()) {
+            TCPServer.getInstance().sendData(socket, query);
         }
     }
 
+    @Override
+    public void update(Observable o, Object arg) {
+        String type = (String)arg;
+
+        //处理 TimerSubject 的消息, 有query消息和bill消息
+        if ("query".equals(type) && customerMap.size() > 0) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("type", "state_query");
+            map.put("seq", querySeq++);
+            String query = new JSONObject(map).toString();
+            broadCast(query);
+            System.out.println("Send state query info");
+        }
+        if ("send_bill".equals(type) && customerMap.size() > 0) {
+            HashMap<String, Float> billMap = BillManager.getInstance().getBillMap();
+            for (Socket s : customerMap.keySet()) {
+                float power = billMap.get(customerMap.get(s)).floatValue();
+                Map<String, Object> map = new HashMap<>();
+                map.put("type", "bill");
+                map.put("seq", billSeq);
+                map.put("power", power);
+                map.put("money", power * 5);
+                String bill = new JSONObject(map).toString();
+                TCPServer.getInstance().sendData(s, bill);
+            }
+            billSeq++;
+            System.out.println("Send bill info");
+        }
+    }
 }

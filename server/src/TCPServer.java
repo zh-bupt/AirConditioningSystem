@@ -1,12 +1,9 @@
-import javax.management.InvalidAttributeValueException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -21,7 +18,9 @@ public class TCPServer implements Runnable{
         return tcpServer;
     }
 
-    private TCPServer() {}
+    private TCPServer() {
+        TimerSubject timerSubject = new TimerSubject(5, 2, 1);
+    }
 
     @Override
     public void run() {
