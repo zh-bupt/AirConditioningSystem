@@ -16,6 +16,8 @@ public class TCPServer implements Runnable{
     private int clientCount = 0;
     private List<Socket> socketList = new ArrayList<>();
     private static TCPServer tcpServer = null;
+    private String mode = null;
+    private float price = 5;
 
     public static TCPServer getInstance() {
         if (tcpServer == null) tcpServer = new TCPServer();
@@ -24,6 +26,7 @@ public class TCPServer implements Runnable{
 
     private TCPServer() {
         TimerSubject timerSubject = new TimerSubject(5, 2, 1);
+        mode = "summer";
     }
 
     @Override
@@ -68,5 +71,13 @@ public class TCPServer implements Runnable{
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getMode() {
+        return mode;
+    }
+
+    public float getPrice() {
+        return price;
     }
 }

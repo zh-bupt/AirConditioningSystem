@@ -1,9 +1,11 @@
 package server.manager;
 
+import server.TCPServer;
 import server.simpleclass.Request;
 
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -31,8 +33,8 @@ public class BillManager implements Observer {
      * @Param room_id 被移除的房间号
      * @Return float 被移除的账单的能耗
      */
-    public float remove(Socket socket) {
-        if (billMap.containsKey(socket)) return billMap.remove(socket);
+    public float remove(String room_id) {
+        if (billMap.containsKey(room_id)) return billMap.remove(room_id);
         return -1;
     }
 
@@ -66,5 +68,32 @@ public class BillManager implements Observer {
      */
     public HashMap<String, Float> getBillMap() {
         return billMap;
+    }
+
+    public float getHigh() {
+        return high;
+    }
+
+    public float getLow() {
+        return low;
+    }
+
+    public float getMedium() {
+        return medium;
+    }
+
+    /*
+     * @Description getBill 得到每个房间的账单, 包含电量和费用
+     * @Param room_id 房间号
+     * @Return Map<String, String> 账单
+     */
+    public Map<String, Float> getBill(String room_id) {
+        Float f = billMap.get(room_id);
+        float elec = 0;
+        if (f != null) elec = f.floatValue();
+        Map<String, Float> map = new HashMap<>();
+        map.put("electricity", f);
+        map.put("cost", Float.valueOf(f * TCPServer.getInstance().getPrice()));
+        return map;
     }
 }

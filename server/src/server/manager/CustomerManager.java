@@ -3,6 +3,7 @@ package server.manager;
 import org.json.JSONObject;
 import server.*;
 import server.simpleclass.Customer;
+import server.simpleclass.Request;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -50,11 +51,15 @@ public class CustomerManager implements Observer {
                         }
                         // TODO 改成观察者模式, 这里仅测试用
                         BillManager.getInstance().addBill(customer.getRoom_id());
-                        ack = "{\"type\":\"login_ack\",\"result\":\"succeed\"}";
+                        ack = String.format(
+                                "{\"type\":\"login_ack\",\"result\":\"succeed\",\"mode\":\"%s\"}",
+                                TCPServer.getInstance().getMode());
                         System.out.println("Welcome customer " + customer.getId() + " in room " + customer.getRoom_id());
                         System.out.println("Login succeeded!");
                     } else {
-                        ack = "{\"type\":\"login_ack\",\"result\":\"failed\"}";
+                        ack = String.format(
+                                "{\"type\":\"login_ack\",\"result\":\"failed\",\"mode\":\"%s\"}",
+                                TCPServer.getInstance().getMode());
                         System.out.println("Login failed!");
                     }
                     ack = StringUtils.getHead(ack.length()) + ack;
@@ -145,4 +150,39 @@ public class CustomerManager implements Observer {
     public Map<Socket, String> getCustomerMap() {
         return customerMap;
     }
+
+    /*
+     * @Description check 用户结账
+     * @Param room_id 房间号
+     * @Return boolean socket是否断开成功
+     */
+    public boolean check(String room_id) {
+        boolean result = true;
+        Socket socket = getSocketKey(room_id);
+        // socket还没有断开
+        if (socket != null) {
+            RequestManager manager = RequestManager.getInstance();
+            Request request = manager.getRequest(room_id);
+            // 温控请求还没有完成
+            if (request != null) {
+                // 结束温控请求
+                manager.removeRequest(room_id);
+                String checkJson = "{\"type\":\"check\"}";
+                TCPServer.getInstance().sendData(socket, checkJson);
+            }
+            // 断开socket
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                result = false;
+            }
+        }
+        // 移除账单
+        BillManager.getInstance().remove(room_id);
+        // 移除状态信息
+        StateManager.getInstance().removeRoom(room_id);
+        return result;
+    }
+
 }

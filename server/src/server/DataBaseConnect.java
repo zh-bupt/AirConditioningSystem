@@ -16,7 +16,7 @@ public class DataBaseConnect {
      * @Param void
      * @Return Connection 数据库连接
      */
-    public static Connection getConnection() {
+    private static Connection getConnection() {
         String connectionUrl = driver + ":" + address + ";" + "databaseName=" + database;
 
         Connection con = null;
@@ -44,7 +44,7 @@ public class DataBaseConnect {
                 new ArrayList<HashMap<String, String>>();
         if (con != null) {
             try {
-                resultList = new ArrayList<HashMap<String, String>>();
+                resultList = new ArrayList<>();
                 stmt = con.createStatement();
                 rs = stmt.executeQuery(querySQL);
                 ResultSetMetaData metaData = rs.getMetaData();
@@ -69,5 +69,24 @@ public class DataBaseConnect {
             }
         }
         return null;
+    }
+
+    public static boolean noneQuery(String SQL) {
+        Connection con = getConnection();
+        Statement stmt = null;
+        boolean result = false;
+
+        if (con != null) {
+            try {
+                stmt = con.createStatement();
+                result = stmt.execute(SQL);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                if (stmt != null) try { stmt.close(); } catch(Exception e) {}
+                if (con != null) try { con.close(); } catch(Exception e) {}
+            }
+        }
+        return result;
     }
 }

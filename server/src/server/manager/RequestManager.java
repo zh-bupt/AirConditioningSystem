@@ -4,12 +4,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import server.Processor;
 import server.StringUtils;
+import server.mapper.RequestMapper;
 import server.simpleclass.Request;
 import server.simpleclass.RoomState;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,28 +39,6 @@ public class RequestManager {
                         newRequest(jsonObject, socket);
                     else if ("stop_wind".equals(jsonObject.getString("type")))
                         stopRequest(jsonObject, socket);
-//                    printWriter = new PrintWriter(socket.getOutputStream());
-//                    Request request = new Request(jsonObject, server.manager.CustomerManager.getInstance().getRoomId(socket));
-//                    int seq = jsonObject.getInt("seq");
-//                    String ack;
-//                    if (isValid(request)) {
-//                        String room_id = server.manager.CustomerManager.getInstance().getRoomId(socket);
-//                        if (requestHashMap.containsKey(room_id)) removeRequest(room_id);
-//                        requestHashMap.put(room_id, request);
-//                        ack  = "{"
-//                                + "\"type\":\"wind_request_ack\","
-//                                + "\"accept\":1,"
-//                                + "\"seq\":" + Integer.toString(seq) + "}";
-//                    } else {
-//                        ack  = "{"
-//                                + "\"type\":\"wind_request_ack\","
-//                                + "\"accept\":0,"
-//                                + "\"seq\":" + Integer.toString(seq) + "}";
-//                    }
-//                    ack = server.StringUtils.getHead(ack.length()) + ack;
-//                    printWriter.print(ack);
-//                    printWriter.flush();
-//                    System.out.println(ack);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
@@ -134,8 +114,20 @@ public class RequestManager {
             // TODO 将request存入数据库
             RoomState state = StateManager.getInstance().getState(request.getRoomId());
             request.setStopTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            int seconds;
+            try {
+                long from = simpleFormat.parse(request.getStartTime()).getTime();
+                long to = simpleFormat.parse(request.getStopTime()).getTime();
+                seconds = (int) ((to - from) / 1000);
+            } catch (ParseException e) {
+                e.printStackTrace();
+                seconds = 0;
+            }
+            request.setElectricity(getPrice(request.getWindPower()) * seconds / 60);
             if (state != null) request.setEndTemp(state.getCurrentTemperature());
-            System.out.println(request.toString());
+            if (new RequestMapper().insert(request))
+                System.out.println("request存入数据库:" + request.toString());
         }
         return request;
     }
@@ -154,5 +146,11 @@ public class RequestManager {
      */
     public HashMap<String, Request> getRequestMap() {
         return requestHashMap;
+    }
+
+    private float getPrice(String type) {
+        if ("high".equals(type)) return BillManager.getInstance().getHigh();
+        if ("medium".equals(type)) return BillManager.getInstance().getMedium();
+        else return BillManager.getInstance().getLow();
     }
 }
