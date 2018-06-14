@@ -1,5 +1,7 @@
+package server.manager;
+
 import org.json.JSONObject;
-import simpleclass.RoomState;
+import server.simpleclass.RoomState;
 
 import java.net.Socket;
 import java.util.HashMap;

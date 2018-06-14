@@ -1,10 +1,15 @@
+package server;
+
+import server.manager.CustomerManager;
+import server.manager.RequestManager;
 import org.json.JSONException;
 import org.json.JSONObject;
-import simpleclass.Customer;
+import server.manager.StateManager;
+import server.simpleclass.Customer;
 import java.net.Socket;
 
 /*
-* CustomerFacade: 住客请求的外观类(单例模式)
+* server.CustomerFacade: 住客请求的外观类(单例模式)
 * 根据socket提交的请求, 调用相应的处理类
  */
 public class CustomerFacade {

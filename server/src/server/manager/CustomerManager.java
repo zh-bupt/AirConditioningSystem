@@ -1,5 +1,8 @@
+package server.manager;
+
 import org.json.JSONObject;
-import simpleclass.Customer;
+import server.*;
+import server.simpleclass.Customer;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -108,7 +111,7 @@ public class CustomerManager implements Observer {
     public void update(Observable o, Object arg) {
         String type = (String)arg;
 
-        //处理 TimerSubject 的消息, 有query消息和bill消息
+        //处理 server.TimerSubject 的消息, 有query消息和bill消息
         if ("query".equals(type) && customerMap.size() > 0) {
             Map<String, Object> map = new HashMap<>();
             map.put("type", "state_query");

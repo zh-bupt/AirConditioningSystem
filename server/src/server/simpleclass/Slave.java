@@ -1,4 +1,4 @@
-package simpleclass;
+package server.simpleclass;
 
 /*
  * Slave: 从机类，包含从机的基本信息

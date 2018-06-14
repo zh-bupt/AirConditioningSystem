@@ -1,4 +1,4 @@
-package simpleclass;
+package server.simpleclass;
 
 import org.json.JSONException;
 import org.json.JSONObject;

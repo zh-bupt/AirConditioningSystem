@@ -1,7 +1,11 @@
+package server.manager;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import simpleclass.Request;
-import simpleclass.RoomState;
+import server.Processor;
+import server.StringUtils;
+import server.simpleclass.Request;
+import server.simpleclass.RoomState;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,11 +38,11 @@ public class RequestManager {
                     else if ("stop_wind".equals(jsonObject.getString("type")))
                         stopRequest(jsonObject, socket);
 //                    printWriter = new PrintWriter(socket.getOutputStream());
-//                    Request request = new Request(jsonObject, CustomerManager.getInstance().getRoomId(socket));
+//                    Request request = new Request(jsonObject, server.manager.CustomerManager.getInstance().getRoomId(socket));
 //                    int seq = jsonObject.getInt("seq");
 //                    String ack;
 //                    if (isValid(request)) {
-//                        String room_id = CustomerManager.getInstance().getRoomId(socket);
+//                        String room_id = server.manager.CustomerManager.getInstance().getRoomId(socket);
 //                        if (requestHashMap.containsKey(room_id)) removeRequest(room_id);
 //                        requestHashMap.put(room_id, request);
 //                        ack  = "{"
@@ -51,7 +55,7 @@ public class RequestManager {
 //                                + "\"accept\":0,"
 //                                + "\"seq\":" + Integer.toString(seq) + "}";
 //                    }
-//                    ack = StringUtils.getHead(ack.length()) + ack;
+//                    ack = server.StringUtils.getHead(ack.length()) + ack;
 //                    printWriter.print(ack);
 //                    printWriter.flush();
 //                    System.out.println(ack);

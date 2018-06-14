@@ -1,3 +1,8 @@
+package server;
+
+import server.manager.BillManager;
+import server.manager.CustomerManager;
+
 import java.util.HashMap;
 import java.util.Observable;
 import java.util.Observer;

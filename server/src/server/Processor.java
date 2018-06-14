@@ -1,8 +1,10 @@
+package server;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /*
-* Processor: 处理类(单例模式), 有一个定长线程池, 用类处理指定数量的请求
+* server.Processor: 处理类(单例模式), 有一个定长线程池, 用类处理指定数量的请求
 * 处理的请求包括登录请求、温控请求、状态信息处理请求等
  */
 public class Processor {

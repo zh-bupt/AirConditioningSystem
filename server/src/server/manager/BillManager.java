@@ -1,4 +1,6 @@
-import simpleclass.Request;
+package server.manager;
+
+import server.simpleclass.Request;
 
 import java.net.Socket;
 import java.util.HashMap;
