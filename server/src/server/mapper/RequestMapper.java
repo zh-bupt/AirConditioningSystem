@@ -1,5 +1,6 @@
 package server.mapper;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import server.DataBaseConnect;
 import server.simpleclass.Request;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 public class RequestMapper implements IMapper {
     @Override
-    public boolean insert(Object o) {
+    public boolean insert(Object o) throws SQLServerException {
         Request request = (Request) o;
         String room_id = request.getRoomId();
         int start_temp = request.getStartTemp();

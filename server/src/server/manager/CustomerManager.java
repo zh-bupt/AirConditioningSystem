@@ -1,13 +1,17 @@
 package server.manager;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.json.JSONObject;
 import server.*;
+import server.mapper.SlaveMapper;
 import server.simpleclass.Customer;
 import server.simpleclass.Request;
+import server.simpleclass.Slave;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class CustomerManager implements Observer {
@@ -49,11 +53,22 @@ public class CustomerManager implements Observer {
                             s.close();
                             customerMap.put(socket, customer.getRoom_id());
                         }
-                        // TODO 改成观察者模式, 这里仅测试用
-                        BillManager.getInstance().addBill(customer.getRoom_id());
                         ack = String.format(
                                 "{\"type\":\"login_ack\",\"result\":\"succeed\",\"mode\":\"%s\"}",
                                 TCPServer.getInstance().getMode());
+                        // 添加账单
+                        BillManager.getInstance().addBill(customer.getRoom_id());
+                        // 记录从机开机时间
+                        Slave slave = new Slave(
+                                customer.getRoom_id(),
+                                new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
+                        );
+                        try {
+                            new SlaveMapper().insert(slave);
+                        } catch (SQLServerException e) {
+                            e.printStackTrace();
+                        }
+
                         System.out.println("Welcome customer " + customer.getId() + " in room " + customer.getRoom_id());
                         System.out.println("Login succeeded!");
                     } else {

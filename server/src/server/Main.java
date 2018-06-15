@@ -13,6 +13,7 @@ public class Main {
     public static void main(String[] args) {
         System.out.println("Hello World!");
         TCPServer server = TCPServer.getInstance();
+        server.init();
         Thread t = new Thread(server);
         t.start();
 //        System.out.println("开关机次数:" +

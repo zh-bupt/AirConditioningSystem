@@ -17,6 +17,7 @@ public class TimerSubject extends Observable {
     public static final String BILL_BROADCAST = "bill_broadcast";
 
     public TimerSubject(int queryInterval, int billSendInterval, int billUpdateInterval){
+        System.out.println("TimerSubject:" + queryInterval + billSendInterval + billUpdateInterval);
         this.queryInterval = queryInterval;
         this.billSendInterval = billSendInterval;
         this.billUpdateInterval = billUpdateInterval;
@@ -50,7 +51,7 @@ public class TimerSubject extends Observable {
             else table[0][i] = 0;
             if (i % billSendInterval == 0) table[1][i] = 1;
             else table[1][i] = 0;
-            if (i % billSendInterval == 0) table[2][i] = 1;
+            if (i % billUpdateInterval == 0) table[2][i] = 1;
             else table[2][i] = 0;
         }
         return table;

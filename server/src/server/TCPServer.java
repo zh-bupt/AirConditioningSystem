@@ -1,9 +1,10 @@
 package server;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import server.manager.CustomerManager;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -16,17 +17,68 @@ public class TCPServer implements Runnable{
     private int clientCount = 0;
     private List<Socket> socketList = new ArrayList<>();
     private static TCPServer tcpServer = null;
-    private String mode = null;
-    private float price = 5;
+    private String mode;
+    private float price;
+    private float low;
+    private float medium;
+    private float high;
+    private TimerSubject timerSubject;
 
     public static TCPServer getInstance() {
         if (tcpServer == null) tcpServer = new TCPServer();
         return tcpServer;
     }
 
-    private TCPServer() {
-        TimerSubject timerSubject = new TimerSubject(5, 2, 1);
-        mode = "summer";
+    private TCPServer() {}
+
+    public void init() {
+        JSONObject configJson = readConfig();
+        int queryInterval = 5, billSendInterval = 2, billUpdateInterval = 1;
+        float pprice = 5, llow = (float) 0.8, mmedium = 1, hhigh = (float) 1.3;
+        String mmode = "summer";
+        if (configJson != null) {
+            try {
+                queryInterval = configJson.getInt("query_interval");
+                billSendInterval = configJson.getInt("bill_send_interval");
+                billUpdateInterval = configJson.getInt("bill_update_interval");
+                mmode = configJson.getString("mode");
+                pprice = configJson.getFloat("price");
+                llow = configJson.getFloat("low");
+                mmedium = configJson.getFloat("medium");
+                hhigh = configJson.getFloat("high");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        this.timerSubject = new TimerSubject(queryInterval, billSendInterval, billUpdateInterval);
+        this.price = pprice;
+        this.low = llow;
+        this.medium = mmedium;
+        this.high = hhigh;
+        this.mode = mmode;
+    }
+
+    private JSONObject readConfig() {
+        File file = new File("src/server/configure.json");
+        InputStream in = null;
+        try {
+            in = new FileInputStream(file);
+            byte[] buffer = new byte[10];
+            String jsonString = "";
+            int byteRead;
+            while ((byteRead = in.read(buffer)) != -1) {
+                jsonString = jsonString + new String(buffer);
+            }
+            JSONObject jsonObject = new JSONObject(jsonString);
+            return jsonObject;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override
@@ -79,5 +131,25 @@ public class TCPServer implements Runnable{
 
     public float getPrice() {
         return price;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode;
+    }
+
+    public void setPrice(float price) {
+        this.price = price;
+    }
+
+    public float getLow() {
+        return low;
+    }
+
+    public float getMedium() {
+        return medium;
+    }
+
+    public float getHigh() {
+        return high;
     }
 }

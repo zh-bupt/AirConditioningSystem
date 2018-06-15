@@ -17,10 +17,13 @@ public class BillManager implements Observer {
     private float high;
     private float medium;
     private float low;
+    private TCPServer server;
+
     private BillManager() {
-        this.high = (float) 1.3;
-        this.medium = (float) 1.0;
-        this.low = (float) 0.8;
+        server = TCPServer.getInstance();
+        this.high = server.getHigh();
+        this.medium = server.getMedium();
+        this.low = server.getLow();
     }
 
     public static BillManager getInstance() {
@@ -68,18 +71,6 @@ public class BillManager implements Observer {
      */
     public HashMap<String, Float> getBillMap() {
         return billMap;
-    }
-
-    public float getHigh() {
-        return high;
-    }
-
-    public float getLow() {
-        return low;
-    }
-
-    public float getMedium() {
-        return medium;
     }
 
     /*

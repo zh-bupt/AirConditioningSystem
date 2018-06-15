@@ -1,5 +1,6 @@
 package server.mapper;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import server.DataBaseConnect;
 import server.simpleclass.Slave;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 public class SlaveMapper implements IMapper {
     @Override
-    public boolean insert(Object o) {
+    public boolean insert(Object o) throws SQLServerException {
         Slave slave = (Slave)o;
         String SQL =
                 String.format("insert slave(id, room_id) values('%s','%s')", slave.getRoomId(), slave.getStartTime());

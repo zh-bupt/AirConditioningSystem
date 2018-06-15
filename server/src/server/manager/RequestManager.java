@@ -1,9 +1,11 @@
 package server.manager;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import server.Processor;
 import server.StringUtils;
+import server.TCPServer;
 import server.mapper.RequestMapper;
 import server.simpleclass.Request;
 import server.simpleclass.RoomState;
@@ -21,8 +23,11 @@ public class RequestManager {
 
     // 返回当前正在进行的温控请求map, key 为 room_id, value 为 Request
     private HashMap<String, Request> requestHashMap = new HashMap<>();
+    private TCPServer server;
 
-    private RequestManager(){}
+    private RequestManager(){
+        server = TCPServer.getInstance();
+    }
 
     public static RequestManager getInstance() {
         if (requestManager == null) requestManager = new RequestManager();
@@ -105,6 +110,10 @@ public class RequestManager {
     }
 
     private boolean isValid(Request request){
+        // 需要制热
+        if (request.getStartTemp() < request.getTargetTemp() && TCPServer.getInstance().getMode() == "summer") return false;
+        // 需要制冷
+        if (request.getStartTemp() > request.getTargetTemp() && TCPServer.getInstance().getMode() == "winter") return false;
         return true;
     }
 
@@ -124,10 +133,14 @@ public class RequestManager {
                 e.printStackTrace();
                 seconds = 0;
             }
-            request.setElectricity(getPrice(request.getWindPower()) * seconds / 60);
+            request.setElectricity(getWindElectricity(request.getWindPower()) * seconds / 60);
             if (state != null) request.setEndTemp(state.getCurrentTemperature());
-            if (new RequestMapper().insert(request))
-                System.out.println("request存入数据库:" + request.toString());
+            try {
+                if (new RequestMapper().insert(request))
+                    System.out.println("request存入数据库:" + request.toString());
+            } catch (SQLServerException e) {
+                e.printStackTrace();
+            }
         }
         return request;
     }
@@ -148,9 +161,9 @@ public class RequestManager {
         return requestHashMap;
     }
 
-    private float getPrice(String type) {
-        if ("high".equals(type)) return BillManager.getInstance().getHigh();
-        if ("medium".equals(type)) return BillManager.getInstance().getMedium();
-        else return BillManager.getInstance().getLow();
+    private float getWindElectricity(String wind_power) {
+        if ("high".equals(wind_power)) return server.getHigh();
+        if ("medium".equals(wind_power)) return server.getMedium();
+        else return server.getLow();
     }
 }
