@@ -1,6 +1,9 @@
 package server;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+import server.mapper.BillMapper;
 import server.mapper.RequestMapper;
+import server.simpleclass.Bill;
 import server.simpleclass.Request;
 
 import java.util.ArrayList;
@@ -9,25 +12,54 @@ import java.util.List;
 
 public class Reporter {
 
-    public static List<Request> getRequestList(String room_id, String start_time, String end_time){
-        String SQL = String.format(
-                "select * from request " +
-                        "where room_id = '%s' " +
-                        "and start_time > '%s' " +
-                        "and start_time < '%s'",
-                room_id, start_time, end_time
-        );
-        return new RequestMapper().gets(SQL);
+    private String roomId;
+    private String startTime;
+    private String endTime;
+
+    public Reporter(String roomId, String startTime, String endTime) {
+        this.roomId = roomId;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
-    public static int getStartTimes(String room_id, String start_time, String end_time){
+    public List<Request> getRequestList(){
+        String condition = String.format(
+                "room_id = '%s' " +
+                        "and start_time > '%s' " +
+                        "and start_time < '%s'",
+                roomId, startTime, endTime
+        );
+        try {
+            return new RequestMapper().gets(condition);
+        } catch (SQLServerException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Bill> getBillList() {
+        String condition = String.format(
+                "room_id = '%s' " +
+                        "and start_time > '%s' " +
+                        "and start_time < '%s'",
+                roomId, startTime, endTime
+        );
+        try {
+            return new BillMapper().gets(condition);
+        } catch (SQLServerException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public int getStartTimes(){
         String SQL = String.format(
                 "select count(distinct start_time) as start_times" +
                         "from slave " +
                         "where room_id = '%s' " +
                         "and start_time > '%s' " +
                         "and start_time < '%s'",
-                room_id, start_time, end_time
+                roomId, startTime, endTime
         );
         ArrayList<HashMap<String, String>> list = DataBaseConnect.query(SQL);
         if (list == null || list.size() == 0) return 0;
@@ -42,14 +74,14 @@ public class Reporter {
         return times;
     }
 
-    public static float getTotalCost(String room_id, String start_time, String end_time) {
+    public float getTotalCost() {
         String SQL = String.format(
                 "select sum(cost) as total_cost " +
                         "from request " +
                         "where room_id = '%s' " +
                         "and start_time > '%s' " +
                         "and start_time < '%s'",
-                room_id, start_time, end_time
+                roomId, startTime, endTime
         );
         ArrayList<HashMap<String, String>> list = DataBaseConnect.query(SQL);
         if (list == null || list.size() == 0) return 0;
@@ -64,7 +96,8 @@ public class Reporter {
         return total_cost;
     }
 
-    public static boolean exportReport(){
+    // TODO 导出报表
+    public boolean exportReport(){
         return false;
     }
 }

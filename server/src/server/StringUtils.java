@@ -3,6 +3,8 @@ package server;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 
 public class StringUtils {
@@ -28,5 +30,9 @@ public class StringUtils {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String getTimeString() {
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }
 }

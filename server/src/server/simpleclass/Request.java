@@ -23,6 +23,8 @@ public class Request {
     private float cost = 0;
     private float electricity = 0;
 
+    public Request() {}
+
     public Request(String roomId, String startTime, int startTemp, String windPower) {
         this.cost = 0;
         this.roomId = roomId;
@@ -71,6 +73,14 @@ public class Request {
         this.targetTemp = jsonObject.getInt("target_tmp");
         this.windPower = jsonObject.getString("wind_power");
         this.startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
+    }
+
+    public void setCost(float cost) {
+        this.cost = cost;
+    }
+
+    public void setTargetTemp(int targetTemp) {
+        this.targetTemp = targetTemp;
     }
 
     public void setEndTemp(int endTemp) {

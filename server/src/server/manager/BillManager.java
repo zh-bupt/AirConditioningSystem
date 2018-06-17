@@ -1,6 +1,9 @@
 package server.manager;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
 import server.TCPServer;
+import server.mapper.BillMapper;
+import server.simpleclass.Bill;
 import server.simpleclass.Request;
 
 import java.net.Socket;
@@ -10,17 +13,20 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class BillManager implements Observer {
-    private HashMap<String, Float> billMap =
+    private HashMap<String, Bill> billMap =
             new HashMap<>();
 
     private static BillManager billManager = null;
     private float high;
     private float medium;
     private float low;
+    private TCPServer server;
+
     private BillManager() {
-        this.high = (float) 1.3;
-        this.medium = (float) 1.0;
-        this.low = (float) 0.8;
+        server = TCPServer.getInstance();
+        this.high = server.getHigh();
+        this.medium = server.getMedium();
+        this.low = server.getLow();
     }
 
     public static BillManager getInstance() {
@@ -33,13 +39,21 @@ public class BillManager implements Observer {
      * @Param room_id 被移除的房间号
      * @Return float 被移除的账单的能耗
      */
-    public float remove(String room_id) {
-        if (billMap.containsKey(room_id)) return billMap.remove(room_id);
-        return -1;
+    public Bill remove(String room_id) {
+        if (billMap.containsKey(room_id)) {
+            Bill bill = billMap.remove(room_id);
+            try {
+                new BillMapper().insert(bill);
+            } catch (SQLServerException e) {
+                e.printStackTrace();
+            }
+            return bill;
+        }
+        return null;
     }
 
     public void addBill(String room_id) {
-        if (!billMap.containsKey(room_id)) billMap.put(room_id, Float.valueOf(0));
+        if (!billMap.containsKey(room_id)) billMap.put(room_id, new Bill(room_id));
     }
 
     @Override
@@ -49,15 +63,8 @@ public class BillManager implements Observer {
             Request request = RequestManager.getInstance().getRequest(room_id);
             if (request == null) continue;
             String wind_power = request.getWindPower();
-            Float pre = billMap.get(room_id), cur;
-            if (wind_power == "high") {
-                cur = Float.valueOf(pre.floatValue() + low / 60);
-            } else if (wind_power == "medium") {
-                cur = Float.valueOf(pre.floatValue() + medium / 60);
-            } else {
-                cur = Float.valueOf(pre.floatValue() + high / 60);
-            }
-            billMap.replace(room_id, cur);
+            float pre = billMap.get(room_id).getElectricity();
+            billMap.get(room_id).setElectricity(pre + getElectricityPrice(wind_power) / 60);
         }
     }
 
@@ -66,20 +73,8 @@ public class BillManager implements Observer {
      * @Param
      * @Return HashMao<String, Float> 所有房间账单信息
      */
-    public HashMap<String, Float> getBillMap() {
+    public HashMap<String, Bill> getBillMap() {
         return billMap;
-    }
-
-    public float getHigh() {
-        return high;
-    }
-
-    public float getLow() {
-        return low;
-    }
-
-    public float getMedium() {
-        return medium;
     }
 
     /*
@@ -87,13 +82,13 @@ public class BillManager implements Observer {
      * @Param room_id 房间号
      * @Return Map<String, String> 账单
      */
-    public Map<String, Float> getBill(String room_id) {
-        Float f = billMap.get(room_id);
-        float elec = 0;
-        if (f != null) elec = f.floatValue();
-        Map<String, Float> map = new HashMap<>();
-        map.put("electricity", f);
-        map.put("cost", Float.valueOf(f * TCPServer.getInstance().getPrice()));
-        return map;
+    public Bill getBill(String room_id) {
+        return billMap.get(room_id);
+    }
+
+    private float getElectricityPrice(String wind_power) {
+        if (wind_power == "high") return server.getHigh();
+        else if (wind_power == "medium") return server.getMedium();
+        else return server.getLow();
     }
 }

@@ -2,6 +2,7 @@ package server;
 
 import server.manager.BillManager;
 import server.manager.CustomerManager;
+import server.simpleclass.Customer;
 
 import java.util.HashMap;
 import java.util.Observable;
@@ -12,17 +13,21 @@ public class TimerSubject extends Observable {
     private int queryInterval;
     private int billSendInterval;
     private int billUpdateInterval;
+    private int checkAliveInterval;
     public static final String QUERY = "query";
     public static final String BILL_UPDATE = "bill_update";
     public static final String BILL_BROADCAST = "bill_broadcast";
+    public static final String CHECK_ALIVE = "check_alive";
 
-    public TimerSubject(int queryInterval, int billSendInterval, int billUpdateInterval){
+    public TimerSubject(int queryInterval, int billSendInterval, int billUpdateInterval, int chackAliveInterval){
         this.queryInterval = queryInterval;
         this.billSendInterval = billSendInterval;
         this.billUpdateInterval = billUpdateInterval;
+        this.checkAliveInterval = chackAliveInterval;
         observerMap.put(BILL_UPDATE, BillManager.getInstance());
         observerMap.put(QUERY, CustomerManager.getInstance());
         observerMap.put(BILL_BROADCAST, CustomerManager.getInstance());
+        observerMap.put(CHECK_ALIVE, CustomerManager.getInstance());
         int[][] table = getScheduleTable();
         new Thread(new Runnable() {
             @Override
@@ -32,6 +37,7 @@ public class TimerSubject extends Observable {
                     if (table[0][index] == 1) notifyObserver(QUERY, "query");
                     if (table[1][index] == 1) notifyObserver(BILL_BROADCAST, "send_bill");
                     if (table[2][index] == 1) notifyObserver(BILL_UPDATE, null);
+                    if (table[3][index] == 1) notifyObserver(CHECK_ALIVE, "check_alive");
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -44,14 +50,16 @@ public class TimerSubject extends Observable {
     }
 
     private int[][] getScheduleTable() {
-        int table[][] = new int[3][60];
+        int table[][] = new int[4][60];
         for (int i = 0; i < 60; ++i) {
             if (i % queryInterval == 0) table[0][i] = 1;
             else table[0][i] = 0;
             if (i % billSendInterval == 0) table[1][i] = 1;
             else table[1][i] = 0;
-            if (i % billSendInterval == 0) table[2][i] = 1;
+            if (i % billUpdateInterval == 0) table[2][i] = 1;
             else table[2][i] = 0;
+            if (i % checkAliveInterval == 0) table[3][i] = 1;
+            else table[3][i] = 0;
         }
         return table;
     }
