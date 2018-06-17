@@ -120,7 +120,6 @@ public class RequestManager {
     public Request removeRequest(String room_id) {
         Request request = requestHashMap.remove(room_id);
         if (request != null) {
-            // TODO 将request存入数据库
             RoomState state = StateManager.getInstance().getState(request.getRoomId());
             request.setStopTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
             SimpleDateFormat simpleFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");

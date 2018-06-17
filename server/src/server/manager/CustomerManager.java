@@ -4,6 +4,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.json.JSONObject;
 import server.*;
 import server.mapper.SlaveMapper;
+import server.simpleclass.Bill;
 import server.simpleclass.Customer;
 import server.simpleclass.Request;
 import server.simpleclass.Slave;
@@ -11,16 +12,21 @@ import server.simpleclass.Slave;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.Date;
 
 public class CustomerManager implements Observer {
     private static CustomerManager customerManager = null;
 
     // 当前连接在服务器上的用户的map, key为socket, value为room_id
     private Map<Socket, String> customerMap = new HashMap<>();
+    private Map<Socket, Long> sockets = new HashMap<>();
     private int querySeq = 0;
     private int billSeq = 0;
+    private long keepAliveInterval = 60;
+
 
 
     private CustomerManager(){
@@ -63,6 +69,7 @@ public class CustomerManager implements Observer {
                                 customer.getRoom_id(),
                                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
                         );
+                        addSocket(socket);
                         try {
                             new SlaveMapper().insert(slave);
                         } catch (SQLServerException e) {
@@ -129,32 +136,42 @@ public class CustomerManager implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        String type = (String)arg;
-
         //处理 server.TimerSubject 的消息, 有query消息和bill消息
-        if ("query".equals(type) && customerMap.size() > 0) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("type", "state_query");
-            map.put("seq", querySeq++);
-            String query = new JSONObject(map).toString();
-            broadCast(query);
-            System.out.println("Send state query info");
-        }
-        if ("send_bill".equals(type) && customerMap.size() > 0) {
-            HashMap<String, Float> billMap = BillManager.getInstance().getBillMap();
-            for (Socket s : customerMap.keySet()) {
-                float power = billMap.get(customerMap.get(s)).floatValue();
-                Map<String, Object> map = new HashMap<>();
-                map.put("type", "bill");
-                map.put("seq", billSeq);
-                map.put("power", power);
-                map.put("money", power * 5);
-                String bill = new JSONObject(map).toString();
-                TCPServer.getInstance().sendData(s, bill);
+        Runnable task = new Runnable() {
+            @Override
+            public void run() {
+                String type = (String)arg;
+                if ("query".equals(type) && customerMap.size() > 0) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("type", "state_query");
+                    map.put("seq", querySeq++);
+                    String query = new JSONObject(map).toString();
+                    broadCast(query);
+                    System.out.println("Send state query info");
+                }
+                if ("send_bill".equals(type) && customerMap.size() > 0) {
+                    HashMap<String, Bill> billMap = BillManager.getInstance().getBillMap();
+                    for (Socket s : customerMap.keySet()) {
+                        Bill bill = billMap.get(customerMap.get(s));
+                        if (bill == null) continue;
+                        float power = bill.getElectricity();
+                        float cost = bill.getCost();
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("type", "bill");
+                        map.put("seq", billSeq);
+                        map.put("power", power);
+                        map.put("money", cost);
+                        String json = new JSONObject(map).toString();
+                        TCPServer.getInstance().sendData(s, json);
+                    }
+                    billSeq++;
+                    System.out.println("Send bill info");
+                }
+                if ("check_alive".equals(type)) checkAlive();
             }
-            billSeq++;
-            System.out.println("Send bill info");
-        }
+        };
+
+        Processor.getInstance().runTask(task);
     }
 
     /*
@@ -197,7 +214,166 @@ public class CustomerManager implements Observer {
         BillManager.getInstance().remove(room_id);
         // 移除状态信息
         StateManager.getInstance().removeRoom(room_id);
+        checkoutDatabase(room_id);
         return result;
     }
 
+    private void checkAlive() {
+        long current = System.currentTimeMillis();
+        for (Socket s : sockets.keySet()) {
+            long interval = (current - sockets.get(s).longValue()) / 1000;
+            if (interval > keepAliveInterval) {
+                try {
+                    s.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                sockets.remove(s);
+                TCPServer.getInstance().removeSocket(s);
+            }
+        }
+    }
+
+    private void addSocket(Socket socket) {
+        sockets.put(socket, Long.valueOf(System.currentTimeMillis()));
+    }
+
+    public boolean Register(Customer customer) {
+        String room_id = customer.getRoom_id();
+        Connection connection = DataBaseConnect.getConnection();
+        if (connection != null) {
+            Statement statement = null;
+            ResultSet res = null;
+            int is_booked = 1;
+            try {
+                statement = connection.createStatement();
+                res = statement.executeQuery(
+                        String.format(
+                                "select is_booked from room where room_id = '%s'", room_id
+                        ));
+                if (res.next()) {
+                    is_booked = res.getInt("is_booked");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (res != null) res.close();
+                    if (statement != null) statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (is_booked == 1) return false;
+        }
+        boolean result = false;
+        connection = DataBaseConnect.getConnection();
+        PreparedStatement ps1 = null;
+        PreparedStatement ps2 = null;
+        try {
+            connection.setAutoCommit(false);
+            String sql1 = String.format(
+                    "update room set is_booked = 1 where room_id = '%s'",
+                    room_id
+            );
+            String sql2 = String.format(
+                    "insert customer(room_id, id) " +
+                            "values(%s, %s)",
+                    customer.getRoom_id(), customer.getId()
+            );
+            ps1 = connection.prepareStatement(sql1);
+            ps1.execute();
+            ps2 = connection.prepareStatement(sql2);
+            ps2.execute();
+            connection.commit();
+            result = true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            try {
+                connection.rollback();
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        } finally {
+            try {
+                if (ps1 != null) ps1.close();
+                if (ps2 != null) ps2.close();
+                connection.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    public List<String> getAvailableRoom() {
+        Connection connection = DataBaseConnect.getConnection();
+        List<String> availableRoomList = null;
+        if (connection != null) {
+            Statement statement = null;
+            ResultSet res = null;
+            try {
+                statement = connection.createStatement();
+                res = statement.executeQuery("select room_id from room where is_booked = 0");
+                availableRoomList = new ArrayList<>();
+                while (res.next()) {
+                    availableRoomList.add(res.getString("room_id"));
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (res == null) res.close();
+                    if (statement == null) statement.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                return availableRoomList;
+            }
+        } else return availableRoomList;
+    }
+
+    private boolean checkoutDatabase(String room_id) {
+        boolean result = false;
+        Connection connection = DataBaseConnect.getConnection();
+        if (connection != null) {
+            PreparedStatement ps1 = null;
+            PreparedStatement ps2 = null;
+            try {
+                connection.setAutoCommit(false);
+                String sql1 = String.format(
+                        "update room set is_booked = 0 where room_id = '%s'",
+                        room_id
+                );
+                String sql2 = String.format(
+                        "delete customer where room_id = '%s'",
+                        room_id
+                );
+                ps1 = connection.prepareStatement(sql1);
+                ps1.execute();
+                ps2 = connection.prepareStatement(sql2);
+                ps2.execute();
+                connection.commit();
+                result = true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            } finally {
+                try {
+                    if (ps1 != null) ps1.close();
+                    if (ps2 != null) ps2.close();
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
+    }
 }

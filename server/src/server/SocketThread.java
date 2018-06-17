@@ -24,7 +24,9 @@ public class SocketThread implements Runnable {
                 byte[] lengthBuf = new byte[4];
                 int result = din.read(lengthBuf);
                 if (result == 0) continue;
-                if (result == -1) break;
+                if(result == -1) break;
+                // 收到消息, 刷新socket
+//                TCPServer.getInstance().refreshSocket(socket);
                 String lengthString = new String(lengthBuf);
                 try {
                     int length = Integer.parseInt(lengthString);

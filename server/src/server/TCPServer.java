@@ -3,19 +3,19 @@ package server;
 import org.json.JSONException;
 import org.json.JSONObject;
 import server.manager.CustomerManager;
+import server.manager.RequestManager;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class TCPServer implements Runnable{
+public class TCPServer implements Runnable {
     private ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
     private int clientCount = 0;
-    private List<Socket> socketList = new ArrayList<>();
+    private List<Socket> sockets = new ArrayList<>();
     private static TCPServer tcpServer = null;
     private String mode;
     private float price;
@@ -23,13 +23,15 @@ public class TCPServer implements Runnable{
     private float medium;
     private float high;
     private TimerSubject timerSubject;
+    private String configFilePath = "src/server/configure.json";
 
     public static TCPServer getInstance() {
         if (tcpServer == null) tcpServer = new TCPServer();
         return tcpServer;
     }
 
-    private TCPServer() {}
+    private TCPServer() {
+    }
 
     public void init() {
         JSONObject configJson = readConfig();
@@ -50,16 +52,16 @@ public class TCPServer implements Runnable{
                 e.printStackTrace();
             }
         }
-        this.timerSubject = new TimerSubject(queryInterval, billSendInterval, billUpdateInterval);
         this.price = pprice;
         this.low = llow;
         this.medium = mmedium;
         this.high = hhigh;
         this.mode = mmode;
+        this.timerSubject = new TimerSubject(queryInterval, billSendInterval, 1, 10);
     }
 
     private JSONObject readConfig() {
-        File file = new File("src/server/configure.json");
+        File file = new File(configFilePath);
         InputStream in = null;
         try {
             in = new FileInputStream(file);
@@ -77,8 +79,38 @@ public class TCPServer implements Runnable{
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
+        } finally {
+            if (in != null) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
+    }
+
+    public boolean changeConfig(JSONObject jsonObject) {
+        Writer writer = null;
+        boolean result = false;
+        try {
+            writer = new FileWriter(configFilePath);
+            String jsonString = jsonObject.toString();
+            writer.write(jsonString);
+            result = true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return result;
     }
 
     @Override
@@ -87,14 +119,11 @@ public class TCPServer implements Runnable{
             ServerSocket serverSocket = new ServerSocket(6666);
             while(true) {
                 Socket socket = serverSocket.accept();
+                clientCount++;
                 System.out.println("第" + clientCount + "个连接,IP地址是：" + socket.getInetAddress());
-                /**
-                 * 服务端使用多线程方便多客户端的连接
-                 * 这里将服务端的socket传给内部类，方便每个客户端都创建一个线程
-                 */
+                // 为每一个socket连接分配一个线程
                 cachedThreadPool.execute(new SocketThread(socket));
                 addSocket(socket);
-                sendData(socket, "Hello!");
             }
 
         } catch (IOException e) {
@@ -103,14 +132,15 @@ public class TCPServer implements Runnable{
     }
 
     public void addSocket(Socket socket) {
-        socketList.add(socket);
-        clientCount++;
+        sockets.add(socket);
     }
 
     public void removeSocket(Socket socket) {
-        if (socketList.remove(socket)) {
-            CustomerManager.getInstance().removeCustomer(socket);
-            clientCount--;
+        System.out.println("Remove socket:" + socket.toString());
+        clientCount--;
+        if (sockets.remove(socket)) {
+            String room_id = CustomerManager.getInstance().removeCustomer(socket);
+            RequestManager.getInstance().removeRequest(room_id);
         }
     }
 

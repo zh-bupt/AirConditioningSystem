@@ -5,6 +5,6 @@
   "medium": 1,
   "low": 0.8,
   "query_interval": 5,
-  "bill_send_interval": 5,
+  "bill_send_interval": 1,
   "bill_update_interval": 5
 }

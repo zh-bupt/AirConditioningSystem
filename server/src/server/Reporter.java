@@ -1,6 +1,9 @@
 package server;
 
+import com.microsoft.sqlserver.jdbc.SQLServerException;
+import server.mapper.BillMapper;
 import server.mapper.RequestMapper;
+import server.simpleclass.Bill;
 import server.simpleclass.Request;
 
 import java.util.ArrayList;
@@ -20,14 +23,33 @@ public class Reporter {
     }
 
     public List<Request> getRequestList(){
-        String SQL = String.format(
-                "select * from request " +
-                        "where room_id = '%s' " +
+        String condition = String.format(
+                "room_id = '%s' " +
                         "and start_time > '%s' " +
                         "and start_time < '%s'",
                 roomId, startTime, endTime
         );
-        return new RequestMapper().gets(SQL);
+        try {
+            return new RequestMapper().gets(condition);
+        } catch (SQLServerException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<Bill> getBillList() {
+        String condition = String.format(
+                "room_id = '%s' " +
+                        "and start_time > '%s' " +
+                        "and start_time < '%s'",
+                roomId, startTime, endTime
+        );
+        try {
+            return new BillMapper().gets(condition);
+        } catch (SQLServerException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public int getStartTimes(){
@@ -74,6 +96,7 @@ public class Reporter {
         return total_cost;
     }
 
+    // TODO 导出报表
     public boolean exportReport(){
         return false;
     }

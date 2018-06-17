@@ -18,7 +18,7 @@ public class DataBaseConnect {
      * @Param void
      * @Return Connection 数据库连接
      */
-    private static Connection getConnection() {
+    public static Connection getConnection() {
         String connectionUrl = driver + ":" + address + ";" + "databaseName=" + database;
 
         Connection con = null;

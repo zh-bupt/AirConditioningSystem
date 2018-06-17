@@ -13,7 +13,7 @@ public class SlaveMapper implements IMapper {
     public boolean insert(Object o) throws SQLServerException {
         Slave slave = (Slave)o;
         String SQL =
-                String.format("insert slave(id, room_id) values('%s','%s')", slave.getRoomId(), slave.getStartTime());
+                String.format("insert slave(room_id, start_time) values('%s','%s')", slave.getRoomId(), slave.getStartTime());
         return DataBaseConnect.noneQuery(SQL);
 
     }
