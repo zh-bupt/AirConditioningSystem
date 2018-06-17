@@ -57,7 +57,12 @@ public class RequestManager {
     private void newRequest(JSONObject jsonObject, Socket socket) throws JSONException, IOException {
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
         Request request = new Request(jsonObject, CustomerManager.getInstance().getRoomId(socket));
-        int seq = jsonObject.getInt("seq");
+        int seq = 0;
+        try {
+            seq = jsonObject.getInt("seq");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         String ack;
         if (isValid(request)) {
             String room_id = CustomerManager.getInstance().getRoomId(socket);

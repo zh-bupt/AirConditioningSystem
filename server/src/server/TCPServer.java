@@ -2,6 +2,7 @@ package server;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import server.manager.BillManager;
 import server.manager.CustomerManager;
 import server.manager.RequestManager;
 
@@ -141,6 +142,8 @@ public class TCPServer implements Runnable {
         if (sockets.remove(socket)) {
             String room_id = CustomerManager.getInstance().removeCustomer(socket);
             RequestManager.getInstance().removeRequest(room_id);
+            // TODO 测试用, 后面要删除
+            BillManager.getInstance().remove(room_id);
         }
     }
 

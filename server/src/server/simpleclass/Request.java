@@ -69,8 +69,8 @@ public class Request {
 
     public Request(JSONObject jsonObject, String roomId) throws JSONException {
         this.roomId = roomId;
-        this.startTemp = jsonObject.getInt("current_tmp");
-        this.targetTemp = jsonObject.getInt("target_tmp");
+        this.startTemp = jsonObject.getInt("current_temp");
+        this.targetTemp = jsonObject.getInt("target_temp");
         this.windPower = jsonObject.getString("wind_power");
         this.startTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
     }

@@ -376,4 +376,10 @@ public class CustomerManager implements Observer {
         }
         return result;
     }
+
+    public void refreshSocket(Socket socket) {
+        if (sockets.containsKey(socket)) {
+            sockets.replace(socket, System.currentTimeMillis());
+        }
+    }
 }

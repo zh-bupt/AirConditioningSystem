@@ -29,6 +29,7 @@ public class CustomerFacade {
      */
     public void handleRequest(String request, Socket socket) {
         try {
+            System.out.println(request);
             JSONObject jsonObject = new JSONObject(request);
             String type = jsonObject.getString("type");
             if (type.equals("login"))
