@@ -34,7 +34,8 @@ MainWindow::MainWindow(QWidget *parent) :
     if(Login::mode_trans==0){
         ui->current_tem_lcd->display(30);
         current_c=1;
-        double current_temp;//测试
+        current_s=1;
+        int current_temp;//测试
         current_temp=ui->current_tem_lcd->value();
        //ui->current_tem_lcd->display(30);
         ui->target_tem_lcd->display(22);
@@ -59,7 +60,8 @@ MainWindow::MainWindow(QWidget *parent) :
     else{
          ui->current_tem_lcd->display(15);
         current_c=1;
-        double current_temp;//测试
+        current_s=1;
+        int current_temp;//测试
         current_temp=ui->current_tem_lcd->value();
        //ui->current_tem_lcd->display(30);
         ui->target_tem_lcd->display(28);
@@ -102,8 +104,8 @@ void MainWindow::on_change_tem_dial_actionTriggered(int action)
 void MainWindow::on_change_tem_bt_clicked()
 {
     current_c=1;
-    double  target_temp;
-    double current_temp;//测试
+    int  target_temp;
+    int  current_temp;//测试
     int wind_power_dial;
     QString wind_power;
     current_temp=ui->current_tem_lcd->value();
@@ -187,8 +189,7 @@ void MainWindow::readMessages()
                         if(accept==1)
                            {
                             //QMessageBox::information(this, "Succeed","Succeed!", QMessageBox::Yes);
-                             current_t=1;
-
+                            current_t=1;
                             qDebug()<<"current_t:"<<current_t;
 
                             }
@@ -211,8 +212,8 @@ void MainWindow::readMessages()
 
                     if(type=="state_query")
                     {
-                        double target_temp;
-                        double current_temp;
+                        int  target_temp;
+                        int  current_temp;
                         int wind_power_dial;
                         int seq;
                         QString wind_power;
@@ -334,7 +335,7 @@ void MainWindow::timerupdate(){
            ui->current_tem_lcd->display(current_tem);
 
        }
-       if(current_t==1&&target_tem>current_tem)
+       if(current_c==1&&current_t==1&&target_tem>current_tem)
        {
            QJsonObject simp_ayjson;
               simp_ayjson.insert("type", "stop_wind");
@@ -370,7 +371,7 @@ void MainWindow::timerupdate(){
               QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
               std::string data = QString(simpbyte_array).toStdString();
               std::string login_sent= Header::getHead(data.length())+data;
-               qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+               qDebug()<< "能不能给个结果啊我也是醉了:"<< QString::fromStdString(login_sent);
               //Socket::write(QString::fromStdString(login_sent).toUtf8());
               tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
               // ui->login->setEnabled(false);
@@ -378,15 +379,20 @@ void MainWindow::timerupdate(){
            }
            else
            ui->current_tem_lcd->display(current_tem);
+           qDebug()<<"我的温度函数:"<<current_tem;
        }
-       if(current_c==1&&(current_tem-target_tem)>=2)
+       if(current_t==0&&current_c==1&&(current_tem-target_tem)>=2)
        {
            //current_t=1;
 
            int wind_power_dial;
+           int current_tem_int;
+           int target_tem_int;
            QString wind_power;
            current_tem=ui->current_tem_lcd->value();
            target_tem=ui->change_tem_dial->value();
+           current_tem_int=current_tem;
+           target_tem_int=target_tem;
            wind_power_dial=ui->change_level->value();
           //ui->current_tem_lcd->display(30);
            //current_t=1;//测试
@@ -403,8 +409,8 @@ void MainWindow::timerupdate(){
            QJsonObject simp_ayjson;
               simp_ayjson.insert("type", "wind_request");
               simp_ayjson.insert("wind_power",wind_power );
-              simp_ayjson.insert("target_temp", target_tem);
-              simp_ayjson.insert("current_temp", current_tem);
+              simp_ayjson.insert("target_temp", target_tem_int);
+              simp_ayjson.insert("current_temp", current_tem_int);
               simp_ayjson.insert("seq", 3);
               QJsonDocument document;
               document.setObject(simp_ayjson);
@@ -429,7 +435,7 @@ void MainWindow::timerupdate(){
            ui->current_tem_lcd->display(current_tem);
 
        }
-       if(current_t==1&&target_tem<current_tem)
+       if(current_c==1&&current_t==1&&target_tem<current_tem)
        {
            QJsonObject simp_ayjson;
               simp_ayjson.insert("type", "stop_wind");
@@ -475,13 +481,18 @@ void MainWindow::timerupdate(){
            ui->current_tem_lcd->display(current_tem);
        }
        double chazhi=(target_tem-current_tem);
-       if(current_c==1&&chazhi>=2)
+       if(current_t==0&&current_c==1&&chazhi>=2)
        {
           // current_t=1;
            int wind_power_dial;
+           int current_tem_int;
+           int target_tem_int;
+
            QString wind_power;
            current_tem=ui->current_tem_lcd->value();
            target_tem=ui->change_tem_dial->value();
+           target_tem_int=target_tem;
+           current_tem_int=current_tem;
            wind_power_dial=ui->change_level->value();
           //ui->current_tem_lcd->display(30);
            //current_t=1;//测试
@@ -498,8 +509,8 @@ void MainWindow::timerupdate(){
            QJsonObject simp_ayjson;
               simp_ayjson.insert("type", "wind_request");
               simp_ayjson.insert("wind_power",wind_power );
-              simp_ayjson.insert("target_temp", target_tem);
-              simp_ayjson.insert("current_temp", current_tem);
+              simp_ayjson.insert("target_temp", target_tem_int);
+              simp_ayjson.insert("current_temp", current_tem_int);
               simp_ayjson.insert("seq", 3);
               QJsonDocument document;
               document.setObject(simp_ayjson);

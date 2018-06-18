@@ -13,19 +13,6 @@ public class RequestMapper implements IMapper {
     @Override
     public boolean insert(Object o) throws SQLServerException {
         Request request = (Request) o;
-        ArrayList<HashMap<String, String>> res = DataBaseConnect.query("select max(id) as id from request");
-        // 取得bill的最大id
-        int request_id;
-        if (res != null && res.size() > 0) {
-            try {
-                String id_string = res.get(0).get("id");
-                if (id_string == null) request_id = 0;
-                else request_id = Integer.parseInt(id_string);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else return false;
         boolean result = true;
         Connection connection = DataBaseConnect.getConnection();
         if (connection != null) {
@@ -54,18 +41,25 @@ public class RequestMapper implements IMapper {
                         cost,
                         electricity
                 );
+                ps1 = connection.prepareStatement(sql1);
+                ps1.execute();
+                // 获得自增下标
+                int index;
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("select @@identity");
+                if (resultSet.next()) index = resultSet.getInt(1);
+                else throw new SQLException();
+                if (statement != null) statement.close();
+                if (resultSet != null) resultSet.close();
 
                 String sql2 = String.format(
                         "insert into room_request(room_id, request_id) " +
                                 "values(%s, %d)",
-                        room_id, request_id + 1
+                        room_id, index
                 );
-                ps1 = connection.prepareStatement(sql1);
-                ps1.execute();
                 ps2 = connection.prepareStatement(sql2);
                 ps2.execute();
                 connection.commit();
-
             } catch (SQLException e) {
                 e.printStackTrace();
                 result = false;
