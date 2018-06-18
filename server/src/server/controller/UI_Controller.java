@@ -22,11 +22,11 @@ public class UI_Controller {
         }
         else
         {
-//            customerMap = new HashMap<>();
-//            for(int i=0;i<30;i++)
-//            {
-//                customerMap.put(new Socket(), Integer.toString(i));
-//            }
+            customerMap = new HashMap<>();
+            for(int i=0;i<30;i++)
+            {
+                customerMap.put(new Socket(), Integer.toString(i));
+            }
             System.out.println("error");
         }
         ui.setRoomButton(customerMap);
