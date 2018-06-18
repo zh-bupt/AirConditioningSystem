@@ -6,26 +6,12 @@ import server.simpleclass.Bill;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class BillMapper implements IMapper {
     @Override
     public boolean insert(Object o) throws SQLServerException {
         Bill bill = (Bill)o;
-        ArrayList<HashMap<String, String>> res = DataBaseConnect.query("select max(id) as id from bill");
-        // 取得bill的最大id
-        int billId;
-        if (res != null && res.size() > 0) {
-            try {
-                String id_string = res.get(0).get("id");
-                if (id_string == null) billId = 0;
-                else billId = Integer.parseInt(id_string);
-            } catch (NumberFormatException e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else return false;
         boolean result = true;
         Connection connection = DataBaseConnect.getConnection();
         if (connection != null) {
@@ -38,14 +24,23 @@ public class BillMapper implements IMapper {
                                 "values(%f, %f, '%s')",
                         bill.getElectricity(), bill.getCost(), bill.getCreateTime()
                 );
+                ps1 = connection.prepareStatement(sql1);
+                ps1.execute();
+                // 获得自增下标
+                int index;
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("select @@identity");
+                if (resultSet.next()) index = resultSet.getInt(1);
+                else throw new SQLException();
+                if (statement != null) statement.close();
+                if (resultSet != null) resultSet.close();
 
                 String sql2 = String.format(
                         "insert into room_bill(room_id, bill_id) " +
                                 "values(%s, %d)",
-                        bill.getRoomId(), billId + 1
+                        bill.getRoomId(), index
                 );
-                ps1 = connection.prepareStatement(sql1);
-                ps1.execute();
+
                 ps2 = connection.prepareStatement(sql2);
                 ps2.execute();
                 connection.commit();
