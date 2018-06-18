@@ -54,10 +54,11 @@ public class RequestMapper implements IMapper {
 
                 String sql2 = String.format(
                         "insert into room_request(room_id, request_id) " +
-                                "values(%s, %d)",
+                                "values('%s', %d)",
                         room_id, index
                 );
                 ps2 = connection.prepareStatement(sql2);
+                System.out.println("Room id" + room_id);
                 ps2.execute();
                 connection.commit();
             } catch (SQLException e) {

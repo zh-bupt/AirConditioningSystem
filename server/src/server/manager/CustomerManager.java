@@ -218,7 +218,7 @@ public class CustomerManager implements Observer {
         return result;
     }
 
-    private void checkAlive() {
+    private synchronized void checkAlive() {
         long current = System.currentTimeMillis();
         for (Socket s : sockets.keySet()) {
             long interval = (current - sockets.get(s).longValue()) / 1000;
@@ -234,7 +234,7 @@ public class CustomerManager implements Observer {
         }
     }
 
-    private void addSocket(Socket socket) {
+    private synchronized void addSocket(Socket socket) {
         sockets.put(socket, Long.valueOf(System.currentTimeMillis()));
     }
 
@@ -377,7 +377,7 @@ public class CustomerManager implements Observer {
         return result;
     }
 
-    public void refreshSocket(Socket socket) {
+    public synchronized void refreshSocket(Socket socket) {
         if (sockets.containsKey(socket)) {
             sockets.replace(socket, System.currentTimeMillis());
         }
