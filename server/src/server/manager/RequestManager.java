@@ -116,9 +116,9 @@ public class RequestManager {
 
     private boolean isValid(Request request){
         // 需要制热
-        if (request.getStartTemp() < request.getTargetTemp() && TCPServer.getInstance().getMode() == "summer") return false;
+        if (request.getStartTemp() <= request.getTargetTemp() && "summer".equals(TCPServer.getInstance().getMode())) return false;
         // 需要制冷
-        if (request.getStartTemp() > request.getTargetTemp() && TCPServer.getInstance().getMode() == "winter") return false;
+        if (request.getStartTemp() >= request.getTargetTemp() && "winter".equals(TCPServer.getInstance().getMode())) return false;
         return true;
     }
 

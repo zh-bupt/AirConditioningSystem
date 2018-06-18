@@ -37,7 +37,7 @@ public class BillMapper implements IMapper {
 
                 String sql2 = String.format(
                         "insert into room_bill(room_id, bill_id) " +
-                                "values(%s, %d)",
+                                "values('%s', %d)",
                         bill.getRoomId(), index
                 );
 
