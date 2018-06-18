@@ -80,7 +80,7 @@ void Login::on_login_clicked()
        tcpSocket->write(QString::fromStdString(login_sent).toUtf8());
         //ui->login->setEnabled(false);
     }
-    accept();//测试用例
+    //accept();//测试用例
     /*if(ui->account_number_in->text().trimmed() == tr("sjw") &&
              ui->password_in->text().trimmed() == tr("123456"))
       {
