@@ -23,4 +23,21 @@ public class RoomState {
     public int getCurrentTemperature() {
         return currentTemperature;
     }
+    public String getRoomId() {
+        return roomId;
+    }
+
+    public int getTargetTemperature() {
+        return targetTemperature;
+    }
+
+    public String getWind_power() {
+        return wind_power;
+    }
+
+    public boolean isOn() {
+        return isOn;
+    }
+
+
 }
