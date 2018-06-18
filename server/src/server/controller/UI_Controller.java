@@ -1,5 +1,6 @@
 package server.controller;
 
+import server.manager.CustomerManager;
 import server.ui.UI;
 
 import java.awt.event.ActionEvent;
@@ -9,16 +10,24 @@ import java.util.*;
 
 public class UI_Controller {
     private UI ui;
-    private Map<Socket, String> customerMap = new HashMap<>();
+    private Map<Socket, String> customerMap = null;
 
     public UI_Controller() {
         ui = UI.getInstance();
         ui.setBounds(10,10,600,450);
         ui.addPowerButtonListener(new PowerButtonListener());
-
-        for(int i=0;i<30;i++)
+        if(!CustomerManager.getInstance().getCustomerMap().isEmpty())
         {
-            customerMap.put(new Socket(), Integer.toString(i));
+            customerMap = CustomerManager.getInstance().getCustomerMap();
+        }
+        else
+        {
+//            customerMap = new HashMap<>();
+//            for(int i=0;i<30;i++)
+//            {
+//                customerMap.put(new Socket(), Integer.toString(i));
+//            }
+            System.out.println("error");
         }
         ui.setRoomButton(customerMap);
 
@@ -32,14 +41,14 @@ public class UI_Controller {
             public void run() {
                 i[0]++;
 
-                if(customerMap.size()>=15)
-                {
-                    for (Map.Entry<Socket, String> item : customerMap.entrySet()){
-                        customerMap.remove(item.getKey());
-                        break;
-                    }
-                }
-//                customerMap.put(Integer.toString(i[0]),Integer.toString(i[0]));
+//                if(customerMap.size()>=15)
+//                {
+//                    for (Map.Entry<Socket, String> item : customerMap.entrySet()){
+//                        customerMap.remove(item.getKey());
+//                        break;
+//                    }
+//                }
+                customerMap = CustomerManager.getInstance().getCustomerMap();
                 ui.setRoomNo(customerMap.size());
                 ui.setRoomButton(customerMap);
                 ui.updateUI();

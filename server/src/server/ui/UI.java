@@ -1,5 +1,6 @@
 package server.ui;
 
+import server.controller.UI_Register_Controller;
 import server.controller.UI_RoomStatus_Controller;
 
 import javax.swing.*;
@@ -15,6 +16,8 @@ public class UI extends JFrame {
     private JMenuBar menuBar;
     private JMenu menuBill;
     private JMenuItem itemDayBill,itemWeekBill,itemMonthBill;
+    private JMenu menuCustomerManager;
+    private JMenuItem itemCustomerRegister,itemCustomerCheck;
     private JMenu menuSettings;
     private JMenuItem itemRatesSetting,itemModeSetting,itemAlgorithmSetting,itemRefreshSetting,itemRoomNoSetting;
     private JMenu menuView;
@@ -58,6 +61,7 @@ public class UI extends JFrame {
         setTitle(title);
         menuBar = new JMenuBar();
         menuPower = new JMenu("电源");
+        menuCustomerManager = new JMenu("用户管理");
         menuBill = new JMenu("账单");
         menuSettings=new JMenu("设置");
         menuView = new JMenu("查看");
@@ -91,6 +95,24 @@ public class UI extends JFrame {
         menuPower.add(itemStart);
         menuPower.add(itemShutDown);
         menuPower.add(itemRestart);
+
+        itemCustomerRegister = new JMenuItem("入住登记");
+        itemCustomerRegister.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new UI_Register_Controller(new UI_Register());
+            }
+        });
+        itemCustomerCheck = new JMenuItem("结账离开");
+        itemCustomerCheck.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new UI_Register_Controller(new UI_Register());
+            }
+        });
+
+        menuCustomerManager.add(itemCustomerRegister);
+        menuCustomerManager.add(itemCustomerCheck);
 
         itemDayBill = new JMenuItem("当日账单");
         itemDayBill.addActionListener(new ActionListener() {
@@ -194,6 +216,7 @@ public class UI extends JFrame {
 
 
         menuBar.add(menuPower);
+        menuBar.add(menuCustomerManager);
         menuBar.add(menuBill);
         menuBar.add(menuSettings);
         menuBar.add(menuView);
