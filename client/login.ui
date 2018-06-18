@@ -207,7 +207,7 @@
      </spacer>
     </item>
     <item>
-     <widget class="QPushButton" name="login_2">
+     <widget class="QPushButton" name="quit">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -238,7 +238,7 @@
  <resources/>
  <connections>
   <connection>
-   <sender>login_2</sender>
+   <sender>quit</sender>
    <signal>clicked()</signal>
    <receiver>Login</receiver>
    <slot>close()</slot>

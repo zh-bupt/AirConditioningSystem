@@ -4,6 +4,9 @@
 #include <QDialog>
 #include "QMessageBox"
 #include "QtNetwork"
+#include "socket.h"
+#include "QString"
+
 
 namespace Ui {
 class Login;
@@ -14,6 +17,7 @@ class Login : public QDialog
     Q_OBJECT
 
 public:
+    static int mode_trans;
     explicit Login(QWidget *parent = 0);
     ~Login();
 
