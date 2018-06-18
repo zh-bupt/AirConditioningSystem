@@ -7,7 +7,7 @@
 Socket::Socket()
 {
     this->qtcpSocket = new QTcpSocket();
-    qtcpSocket->connectToHost(QHostAddress("10.206.13.14"), 6666);
+    qtcpSocket->connectToHost(QHostAddress("192.168.43.142"), 6666);
 }
 Socket* Socket::Instance()
 {

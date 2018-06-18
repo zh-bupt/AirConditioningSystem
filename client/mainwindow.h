@@ -32,6 +32,7 @@ private:
      QTcpSocket *tcpSocket1;
      int current_t=0;
      int current_s=0;
+     int current_c=0;
 
 };
 

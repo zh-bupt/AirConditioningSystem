@@ -199,6 +199,9 @@
      </item>
      <item>
       <widget class="QLCDNumber" name="power_lcd">
+       <property name="digitCount">
+        <number>5</number>
+       </property>
        <property name="segmentStyle">
         <enum>QLCDNumber::Flat</enum>
        </property>
@@ -206,8 +209,14 @@
      </item>
      <item>
       <widget class="QLCDNumber" name="money_lcd">
+       <property name="digitCount">
+        <number>5</number>
+       </property>
        <property name="segmentStyle">
         <enum>QLCDNumber::Flat</enum>
+       </property>
+       <property name="value" stdset="0">
+        <double>0.000000000000000</double>
        </property>
       </widget>
      </item>
@@ -233,7 +242,7 @@
      <x>0</x>
      <y>0</y>
      <width>512</width>
-     <height>26</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

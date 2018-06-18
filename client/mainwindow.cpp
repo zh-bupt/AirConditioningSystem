@@ -29,10 +29,60 @@ MainWindow::MainWindow(QWidget *parent) :
 //    connect(tcpSocket1,SIGNAL(readyRead()),this,SLOT(readMessages_state()));
 //    connect(tcpSocket1,SIGNAL(readyRead()),this,SLOT(readMessages_bill()));
 //    connect(tcpSocket1,SIGNAL(readyRead()),this,SLOT(readMessages_check()));
-    if(Login::mode_trans==0)
-        ui->current_tem_lcd->display(20);
-    else
-        ui->current_tem_lcd->display(15);
+    ui->target_tem->display(18);
+    ui->level->display(1);
+    if(Login::mode_trans==0){
+        ui->current_tem_lcd->display(30);
+        current_c=1;
+        double current_temp;//测试
+        current_temp=ui->current_tem_lcd->value();
+       //ui->current_tem_lcd->display(30);
+        ui->target_tem_lcd->display(22);
+        ui->leve_lcd->display(1);
+        QJsonObject simp_ayjson;
+           simp_ayjson.insert("type", "wind_request");
+           simp_ayjson.insert("wind_power","low" );
+           simp_ayjson.insert("target_temp", 22);
+           simp_ayjson.insert("current_temp", current_temp);
+           simp_ayjson.insert("seq", 3);
+           QJsonDocument document;
+           document.setObject(simp_ayjson);
+           QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+           std::string data = QString(simpbyte_array).toStdString();
+           std::string login_sent= Header::getHead(data.length())+data;
+            qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+           //Socket::write(QString::fromStdString(login_sent).toUtf8());
+           tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+           // ui->login->setEnabled(false);
+
+    }
+    else{
+         ui->current_tem_lcd->display(15);
+        current_c=1;
+        double current_temp;//测试
+        current_temp=ui->current_tem_lcd->value();
+       //ui->current_tem_lcd->display(30);
+        ui->target_tem_lcd->display(28);
+        ui->leve_lcd->display(1);
+        QJsonObject simp_ayjson;
+           simp_ayjson.insert("type", "wind_request");
+           simp_ayjson.insert("wind_power","low" );
+           simp_ayjson.insert("target_temp", 28);
+           simp_ayjson.insert("current_temp", current_temp);
+           simp_ayjson.insert("seq", 3);
+           QJsonDocument document;
+           document.setObject(simp_ayjson);
+           QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+           std::string data = QString(simpbyte_array).toStdString();
+           std::string login_sent= Header::getHead(data.length())+data;
+            qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+           //Socket::write(QString::fromStdString(login_sent).toUtf8());
+           tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+           // ui->login->setEnabled(false);
+
+
+
+    }
      QTimer*timer =new QTimer(this);
      connect(timer,&QTimer::timeout, this, &MainWindow::timerupdate);
      timer->start(1000);
@@ -51,6 +101,7 @@ void MainWindow::on_change_tem_dial_actionTriggered(int action)
 }
 void MainWindow::on_change_tem_bt_clicked()
 {
+    current_c=1;
     double  target_temp;
     double current_temp;//测试
     int wind_power_dial;
@@ -61,7 +112,7 @@ void MainWindow::on_change_tem_bt_clicked()
    //ui->current_tem_lcd->display(30);
    ui->target_tem_lcd->display(target_temp);
    ui->leve_lcd->display(wind_power_dial);
-
+    //current_t=1;//测试
     if(wind_power_dial==3)
        { wind_power="high";
         current_s=3;}
@@ -123,18 +174,22 @@ void MainWindow::readMessages()
                     }
                     if(type=="wind_request_ack")
                     {
+                        int accept;
+
                         if (obj.contains("accept")) {
                                    QJsonValue accept_value = obj.value("accept");
                                    if (accept_value.isDouble()) {
-                                       int accept = accept_value.toVariant().toInt();
+                                       accept = accept_value.toVariant().toInt();
                                        qDebug() << "accept : " << accept;
                                    }
                                }
 
                         if(accept==1)
                            {
-                            QMessageBox::information(this, "Succeed","Succeed!", QMessageBox::Yes);
+                            //QMessageBox::information(this, "Succeed","Succeed!", QMessageBox::Yes);
                              current_t=1;
+
+                            qDebug()<<"current_t:"<<current_t;
 
                             }
 
@@ -148,9 +203,10 @@ void MainWindow::readMessages()
                     if(type=="stop_wind_ack")
                     {
 
-                            QMessageBox::information(this, "Succeed","Stop Succeed!", QMessageBox::Yes);
+                            //QMessageBox::information(this, "Succeed","Stop Succeed!", QMessageBox::Yes);
                                 //温度函数，当前温度会变化，还没有写
                             current_t=0;
+
                     }
 
                     if(type=="state_query")
@@ -235,6 +291,7 @@ void MainWindow::readMessages()
                             QMessageBox::information(this, "Succeed","Stop Succeed!", QMessageBox::Yes);
                                 //温度函数，当前温度会变化，还没有写
                               current_t=0;
+                              current_c=0;
                     }
                 }
      }
@@ -256,6 +313,7 @@ void MainWindow::on_pushButton_clicked()
        //Socket::write(QString::fromStdString(login_sent).toUtf8());
        tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
        // ui->login->setEnabled(false);
+       current_c=0;
 
 }
 void MainWindow::timerupdate(){
@@ -276,20 +334,87 @@ void MainWindow::timerupdate(){
            ui->current_tem_lcd->display(current_tem);
 
        }
-       if(current_tem==1&&target_tem<current_tem)
+       if(current_t==1&&target_tem>current_tem)
        {
+           QJsonObject simp_ayjson;
+              simp_ayjson.insert("type", "stop_wind");
+              simp_ayjson.insert("seq", 4);
+              QJsonDocument document;
+              document.setObject(simp_ayjson);
+              QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+              std::string data = QString(simpbyte_array).toStdString();
+              std::string login_sent= Header::getHead(data.length())+data;
+               qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+              //Socket::write(QString::fromStdString(login_sent).toUtf8());
+              tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+              // ui->login->setEnabled(false);
+              current_c=0;
+       }
+       if(current_t==1&&target_tem<current_tem)
+       {
+
            if(current_s==1)
                current_tem=current_tem-0.3;
            if(current_s==2)
                current_tem=current_tem-0.5;
            if(current_s==3)
                current_tem=current_tem-0.7;
-           if(current_tem<target_tem)
+           if(current_tem<=target_tem)
+           {
            ui->current_tem_lcd->display(target_tem);
+           QJsonObject simp_ayjson;
+              simp_ayjson.insert("type", "stop_wind");
+              simp_ayjson.insert("seq", 4);
+              QJsonDocument document;
+              document.setObject(simp_ayjson);
+              QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+              std::string data = QString(simpbyte_array).toStdString();
+              std::string login_sent= Header::getHead(data.length())+data;
+               qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+              //Socket::write(QString::fromStdString(login_sent).toUtf8());
+              tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+              // ui->login->setEnabled(false);
+              //current_t=0;
+           }
            else
            ui->current_tem_lcd->display(current_tem);
        }
+       if(current_c==1&&(current_tem-target_tem)>=2)
+       {
+           //current_t=1;
 
+           int wind_power_dial;
+           QString wind_power;
+           current_tem=ui->current_tem_lcd->value();
+           target_tem=ui->change_tem_dial->value();
+           wind_power_dial=ui->change_level->value();
+          //ui->current_tem_lcd->display(30);
+           //current_t=1;//测试
+           if(wind_power_dial==3)
+              { wind_power="high";
+               current_s=3;}
+           else if(wind_power_dial==2)
+               {wind_power="medium";
+               current_s=2;}
+           else
+              { wind_power="low";
+               current_s=1;}
+
+           QJsonObject simp_ayjson;
+              simp_ayjson.insert("type", "wind_request");
+              simp_ayjson.insert("wind_power",wind_power );
+              simp_ayjson.insert("target_temp", target_tem);
+              simp_ayjson.insert("current_temp", current_tem);
+              simp_ayjson.insert("seq", 3);
+              QJsonDocument document;
+              document.setObject(simp_ayjson);
+              QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+              std::string data = QString(simpbyte_array).toStdString();
+              std::string login_sent= Header::getHead(data.length())+data;
+               qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+              //Socket::write(QString::fromStdString(login_sent).toUtf8());
+              tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+       }
     }
 
     if(Login::mode_trans==1)
@@ -304,7 +429,23 @@ void MainWindow::timerupdate(){
            ui->current_tem_lcd->display(current_tem);
 
        }
-       if(current_tem==1&&target_tem>current_tem)
+       if(current_t==1&&target_tem<current_tem)
+       {
+           QJsonObject simp_ayjson;
+              simp_ayjson.insert("type", "stop_wind");
+              simp_ayjson.insert("seq", 4);
+              QJsonDocument document;
+              document.setObject(simp_ayjson);
+              QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+              std::string data = QString(simpbyte_array).toStdString();
+              std::string login_sent= Header::getHead(data.length())+data;
+               qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+              //Socket::write(QString::fromStdString(login_sent).toUtf8());
+              tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+              // ui->login->setEnabled(false);
+              current_c=0;
+       }
+       if(current_t==1&&target_tem>current_tem)
        {
            if(current_s==1)
                current_tem=current_tem+0.3;
@@ -312,224 +453,66 @@ void MainWindow::timerupdate(){
                current_tem=current_tem+0.5;
            if(current_s==3)
                current_tem=current_tem+0.7;
-           if(current_tem>target_tem)
+           if(current_tem>=target_tem)
+            {
            ui->current_tem_lcd->display(target_tem);
+           QJsonObject simp_ayjson;
+              simp_ayjson.insert("type", "stop_wind");
+              simp_ayjson.insert("seq", 4);
+              QJsonDocument document;
+              document.setObject(simp_ayjson);
+              QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+              std::string data = QString(simpbyte_array).toStdString();
+              std::string login_sent= Header::getHead(data.length())+data;
+               qDebug()<< "检查下错误:"<< QString::fromStdString(login_sent);
+              //Socket::write(QString::fromStdString(login_sent).toUtf8());
+              tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+              // ui->login->setEnabled(false);
+              //current_t=0;
+
+           }
            else
            ui->current_tem_lcd->display(current_tem);
        }
+       double chazhi=(target_tem-current_tem);
+       if(current_c==1&&chazhi>=2)
+       {
+          // current_t=1;
+           int wind_power_dial;
+           QString wind_power;
+           current_tem=ui->current_tem_lcd->value();
+           target_tem=ui->change_tem_dial->value();
+           wind_power_dial=ui->change_level->value();
+          //ui->current_tem_lcd->display(30);
+           //current_t=1;//测试
+           if(wind_power_dial==3)
+              { wind_power="high";
+               current_s=3;}
+           else if(wind_power_dial==2)
+               {wind_power="medium";
+               current_s=2;}
+           else
+              { wind_power="low";
+               current_s=1;}
+
+           QJsonObject simp_ayjson;
+              simp_ayjson.insert("type", "wind_request");
+              simp_ayjson.insert("wind_power",wind_power );
+              simp_ayjson.insert("target_temp", target_tem);
+              simp_ayjson.insert("current_temp", current_tem);
+              simp_ayjson.insert("seq", 3);
+              QJsonDocument document;
+              document.setObject(simp_ayjson);
+              QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
+              std::string data = QString(simpbyte_array).toStdString();
+              std::string login_sent= Header::getHead(data.length())+data;
+               qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
+              //Socket::write(QString::fromStdString(login_sent).toUtf8());
+              tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
+       }
 
     }
+
+
+
 }
-//void MainWindow::readMessages_stop()
-//{
-//    QString data=tcpSocket1->readAll();
-//    data = data.mid(4);
-//    // std::string data=tcpSocket1->readAll();
-//    QJsonParseError simp_json_error;
-//    QString type;
-//    // std::string data1=QString(QString::fromStdString((data)).toUtf8()).toStdString();
-//    // QString simpjson_str= QString::fromStdString(data);
-//    QString simpjson_str=data;
-//    QJsonDocument simp_parse_doucment = QJsonDocument::fromJson(simpjson_str.toUtf8(), &simp_json_error);
-//            //检查json是否有错误
-//    if (simp_json_error.error == QJsonParseError::NoError)
-//       {
-//          if (simp_parse_doucment.isObject())
-//                {
-//                    //开始解析json对象
-//                    QJsonObject obj = simp_parse_doucment.object();
-//                    //如果包含type
-//                    if (obj.contains("type"))
-//                    {
-//                        //的到type
-//                        QJsonValue type_value = obj.take("type");
-//                        if (type_value.isString())
-//                        {
-//                            //转换type
-//                            type = type_value.toVariant().toString();
-//                        }
-//                    }
-//                    if(type=="stop_wind_ack")
-//                    {
-
-//                            QMessageBox::information(this, "Succeed","Stop Succeed!", QMessageBox::Yes);
-//                                //温度函数，当前温度会变化，还没有写
-
-//                    }
-//                }
-//     }
-//    qDebug() <<"简单的QT解析出来的数据：" << type;
-//}
-//void MainWindow::readMessages_state()
-//{
-//    QString data=tcpSocket1->readAll();
-//    data = data.mid(4);
-//    // std::string data=tcpSocket1->readAll();
-//    QJsonParseError simp_json_error;
-//    QString type;
-//    // std::string data1=QString(QString::fromStdString((data)).toUtf8()).toStdString();
-//    // QString simpjson_str= QString::fromStdString(data);
-//    QString simpjson_str=data;
-//    QJsonDocument simp_parse_doucment = QJsonDocument::fromJson(simpjson_str.toUtf8(), &simp_json_error);
-//            //检查json是否有错误
-//    if (simp_json_error.error == QJsonParseError::NoError)
-//       {
-//          if (simp_parse_doucment.isObject())
-//                {
-//                    //开始解析json对象
-//                    QJsonObject obj = simp_parse_doucment.object();
-//                    //如果包含type
-//                    if (obj.contains("type"))
-//                    {
-//                        //的到type
-//                        QJsonValue type_value = obj.take("type");
-//                        if (type_value.isString())
-//                        {
-//                            //转换type
-//                            type = type_value.toVariant().toString();
-//                        }
-//                    }
-//                    if(type=="state_query")
-//                    {
-//                        int  target_temp;
-//                        int current_temp;
-//                        int wind_power_dial;
-//                        QString wind_power;
-//                        target_temp=ui->target_tem_lcd->value();
-//                        current_temp=ui->current_tem_lcd->value();
-//                        wind_power_dial=ui->leve_lcd->value();
-//                        if(wind_power_dial==3)
-//                            wind_power="high";
-//                        else if(wind_power_dial==2)
-//                            wind_power="medium";
-//                        else
-//                            wind_power="low";
-//                        QJsonObject simp_ayjson;
-//                           simp_ayjson.insert("type", "state_query_ack");
-//                           simp_ayjson.insert("current_tmp",current_temp );
-//                           simp_ayjson.insert("target_tmp", target_temp);
-//                            simp_ayjson.insert("wind_power", wind_power);
-//                           QJsonDocument document;
-//                           document.setObject(simp_ayjson);
-//                           QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
-//                           std::string data = QString(simpbyte_array).toStdString();
-//                           std::string login_sent= Header::getHead(data.length())+data;
-//                            qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
-//                           //Socket::write(QString::fromStdString(login_sent).toUtf8());
-//                           tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
-//                           // ui->login->setEnabled(false);
-
-//                    }
-//                }
-//     }
-//    qDebug() <<"简单的QT解析出来的数据：" << type;
-//}
-//void MainWindow::readMessages_bill()
-//{
-//    QString data=tcpSocket1->readAll();
-//    data = data.mid(4);
-//    // std::string data=tcpSocket1->readAll();
-//    QJsonParseError simp_json_error;
-//    QString type;
-//    // std::string data1=QString(QString::fromStdString((data)).toUtf8()).toStdString();
-//    // QString simpjson_str= QString::fromStdString(data);
-//    QString simpjson_str=data;
-//    QJsonDocument simp_parse_doucment = QJsonDocument::fromJson(simpjson_str.toUtf8(), &simp_json_error);
-//            //检查json是否有错误
-//    if (simp_json_error.error == QJsonParseError::NoError)
-//       {
-//          if (simp_parse_doucment.isObject())
-//                {
-//                    //开始解析json对象
-//                    QJsonObject obj = simp_parse_doucment.object();
-//                    //如果包含type
-//                    if (obj.contains("type"))
-//                    {
-//                        //的到type
-//                        QJsonValue type_value = obj.take("type");
-//                        if (type_value.isString())
-//                        {
-//                            //转换type
-//                            type = type_value.toVariant().toString();
-//                        }
-//                    }
-//                    if(type=="bill")
-//                    {
-
-
-//                        if (obj.contains("money")) {
-//                                   QJsonValue money_value = obj.value("money");
-//                                   if (money_value.isDouble()) {
-//                                       int money = money_value.toVariant().toInt();
-//                                       ui->money_lcd->display(money);
-//                                       qDebug() << "money : " << money;
-//                                   }
-//                               }
-//                        if (obj.contains("power")) {
-//                                   QJsonValue power_value = obj.value("power");
-//                                   if (power_value.isDouble()) {
-//                                       int power = power_value.toVariant().toInt();
-//                                       ui->power_lcd->display(power);
-//                                       qDebug() << "power : " << power;
-//                                   }
-//                               }
-//                           QJsonObject simp_ayjson;
-//                           simp_ayjson.insert("type", "bill_ack");
-//                           QJsonDocument document;
-//                           document.setObject(simp_ayjson);
-//                           QByteArray simpbyte_array = document.toJson(QJsonDocument::Compact);
-//                           std::string data = QString(simpbyte_array).toStdString();
-//                           std::string login_sent= Header::getHead(data.length())+data;
-//                            qDebug()<< "简单的QTJson数据:"<< QString::fromStdString(login_sent);
-//                           //Socket::write(QString::fromStdString(login_sent).toUtf8());
-//                           tcpSocket1->write(QString::fromStdString(login_sent).toUtf8());
-//                           // ui->login->setEnabled(false);
-
-
-
-//                    }
-//                }
-//     }
-//    qDebug() <<"简单的QT解析出来的数据：" << type;
-//}
-//void MainWindow::readMessages_check()
-//{
-//    QString data=tcpSocket1->readAll();
-//    data = data.mid(4);
-//    // std::string data=tcpSocket1->readAll();
-//    QJsonParseError simp_json_error;
-//    QString type;
-//    // std::string data1=QString(QString::fromStdString((data)).toUtf8()).toStdString();
-//    // QString simpjson_str= QString::fromStdString(data);
-//    QString simpjson_str=data;
-//    QJsonDocument simp_parse_doucment = QJsonDocument::fromJson(simpjson_str.toUtf8(), &simp_json_error);
-//            //检查json是否有错误
-//    if (simp_json_error.error == QJsonParseError::NoError)
-//       {
-//          if (simp_parse_doucment.isObject())
-//                {
-//                    //开始解析json对象
-//                    QJsonObject obj = simp_parse_doucment.object();
-//                    //如果包含type
-//                    if (obj.contains("type"))
-//                    {
-//                        //的到type
-//                        QJsonValue type_value = obj.take("type");
-//                        if (type_value.isString())
-//                        {
-//                            //转换type
-//                            type = type_value.toVariant().toString();
-//                        }
-//                    }
-//                    if(type=="check")
-//                    {
-
-//                            QMessageBox::information(this, "Succeed","Stop Succeed!", QMessageBox::Yes);
-//                                //温度函数，当前温度会变化，还没有写
-
-//                    }
-//                }
-//     }
-//    qDebug() <<"简单的QT解析出来的数据：" << type;
-
-//}
