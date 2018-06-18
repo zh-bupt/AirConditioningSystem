@@ -86,5 +86,6 @@ public class Main {
 //                System.out.println(r.getRoomId() + ":" + r.getStartTime());
 //            }
 //        }
+//        new Reporter("6616", "2018-01-01 00:00:00", "2018-12-31 23:59:59").exportReport();
     }
 }
