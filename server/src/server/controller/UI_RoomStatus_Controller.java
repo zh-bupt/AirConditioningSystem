@@ -24,6 +24,7 @@ public class UI_RoomStatus_Controller {
         public void actionPerformed(ActionEvent e) {
             roomState = StateManager.getInstance().getState(ui_roomStatus.getRoomNo());
             roomRequest = RequestManager.getInstance().getRequest(ui_roomStatus.getRoomNo());
+//<<<<<<< HEAD
             bill = BillManager.getInstance().getBill(ui_roomStatus.getRoomNo());
             ui_roomStatus.setTextArea(
                     "房间号：" +roomState.getRoomId()
@@ -43,6 +44,10 @@ public class UI_RoomStatus_Controller {
 //                            +"\ncost:" +roomRequest.getCost()
 //                    +"\nelectricity:"+roomRequest.getElectricity()
             );
+//=======
+//            ui_roomStatus.setTextArea("如果你看到这条信息，说明roomstate还没传过来。请稍等片刻重新打开。");
+//            ui_roomStatus.setTextArea("房间号："+roomState.getRoomId()+"\n\n当前状态：\n现在温度："+roomState.getCurrentTemperature()+"\n设定稳定："+roomState.getTargetTemperature()+"\n风速:"+roomState.getWind_power()+"\n状态："+ roomState.isOn()+"\n\n当前请求："+"\nstartTime:"+roomRequest.getStartTime()+"\nstopTime:"+roomRequest.getStopTime()+"\nstartTemp:"+roomRequest.getStartTemp()+"\nendTemp:"+roomRequest.getEndTemp()+"\ntargetTemp:"+roomRequest.getTargetTemp()+"\nwindPower:"+roomRequest.getWindPower()+"\ncost:"+roomRequest.getCost()+"\nelectricity:"+roomRequest.getElectricity());
+//>>>>>>> ec0944be7e64b1017fcc6455990ccb42daccdfc5
 
 
         }
@@ -52,6 +57,7 @@ public class UI_RoomStatus_Controller {
         ui_roomStatus = roomStatus;
         roomState = StateManager.getInstance().getState(ui_roomStatus.getRoomNo());
         roomRequest = RequestManager.getInstance().getRequest(ui_roomStatus.getRoomNo());
+//<<<<<<< HEAD
         bill = BillManager.getInstance().getBill(ui_roomStatus.getRoomNo());
         ui_roomStatus.setTextArea(
                 "房间号：" + roomState.getRoomId()
@@ -71,6 +77,10 @@ public class UI_RoomStatus_Controller {
 //                +"\ncost:"+roomRequest.getCost()
 //                +"\nelectricity:"+roomRequest.getElectricity()
         );
+//=======
+//        ui_roomStatus.setTextArea("如果你看到这条信息，说明roomstate还没传过来。请稍等片刻重新打开。");
+//        ui_roomStatus.setTextArea("房间号："+roomState.getRoomId()+"\n\n当前状态：\n现在温度："+roomState.getCurrentTemperature()+"\n设定稳定："+roomState.getTargetTemperature()+"\n风速:"+roomState.getWind_power()+"\n状态："+ roomState.isOn()+"\n\n当前请求："+"\nstartTime:"+roomRequest.getStartTime()+"\nstopTime:"+roomRequest.getStopTime()+"\nstartTemp:"+roomRequest.getStartTemp()+"\nendTemp:"+roomRequest.getEndTemp()+"\ntargetTemp:"+roomRequest.getTargetTemp()+"\nwindPower:"+roomRequest.getWindPower()+"\ncost:"+roomRequest.getCost()+"\nelectricity:"+roomRequest.getElectricity());
+//>>>>>>> ec0944be7e64b1017fcc6455990ccb42daccdfc5
 
         ui_roomStatus.addButton1Listener(new Button1Listener());
 
