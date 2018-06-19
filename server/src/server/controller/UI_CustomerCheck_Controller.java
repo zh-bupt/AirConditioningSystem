@@ -18,18 +18,18 @@ public class UI_CustomerCheck_Controller {
     private UI_CustomerCheck ui_customerCheck;
     private List<String> checkingRooms = new ArrayList<>();
     private String room_id;
-    private Map<Socket, String> customerMap = null;
+    private Map<String, Bill> customerMap = null;
     private Bill bill;
 
     private void getData(){
         checkingRooms.clear();
-        customerMap = CustomerManager.getInstance().getCustomerMap();
+        customerMap = BillManager.getInstance().getBillMap();
         if(customerMap!=null)
         {
-            Iterator<Socket> iterator = customerMap.keySet().iterator();
+            Iterator<String> iterator = customerMap.keySet().iterator();
             while (iterator.hasNext()) {
-                Socket key = iterator.next();
-                checkingRooms.add(customerMap.get(key));
+                String key = iterator.next();
+                checkingRooms.add(key);
             }
             Collections.sort(checkingRooms);
         }

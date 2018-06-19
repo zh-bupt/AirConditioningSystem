@@ -18,7 +18,7 @@ public class UI_Reporter extends JFrame {
 
     private JTextField textField_roomID;
     private JLabel roomNoLabel;
-    private JButton button1;
+    private JButton button1,button2;
 
     public int getTime() {
         return time;
@@ -55,17 +55,23 @@ public class UI_Reporter extends JFrame {
         textField_roomID.setBounds(70,10,50,20);
         button1 = new JButton("查询");
         button1.setBounds(130,10,50,20);
+        button2 = new JButton("导出");
+        button2.setBounds(200,10,50,20);
 
         area.setBounds(10,50, 280,210);
         this.add(roomNoLabel);
         this.add(area);
         this.add(textField_roomID);
         this.add(button1);
+        this.add(button2);
         this.setLayout(null);
 
     }
     public void addButton1Listener(ActionListener mal) {
         button1.addActionListener(mal);
+    }
+    public void addButton2Listener(ActionListener mal) {
+        button2.addActionListener(mal);
     }
 
 
