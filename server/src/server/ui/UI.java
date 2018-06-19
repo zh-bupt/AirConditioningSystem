@@ -20,7 +20,7 @@ public class UI extends JFrame {
     private JMenu menuCustomerManager;
     private JMenuItem itemCustomerRegister,itemCustomerCheck;
     private JMenu menuSettings;
-    private JMenuItem itemRatesSetting,itemModeSetting,itemAlgorithmSetting,itemRefreshSetting,itemRoomNoSetting;
+    private JMenuItem itemSettings,itemRatesSetting,itemModeSetting,itemAlgorithmSetting,itemRefreshSetting,itemRoomNoSetting;
     private JMenu menuView;
     private JMenuItem itemViewStatus,itemViewErrors;
     private JMenu menuAccount;
@@ -62,11 +62,11 @@ public class UI extends JFrame {
         setTitle(title);
         menuBar = new JMenuBar();
         menuPower = new JMenu("电源");
-        menuCustomerManager = new JMenu("用户管理");
+        menuCustomerManager = new JMenu("住客");
         menuBill = new JMenu("账单");
         menuSettings=new JMenu("设置");
         menuView = new JMenu("查看");
-        menuAccount = new JMenu("账户");
+//        menuAccount = new JMenu("账户");
 
         itemStart = new JMenuItem("开机");
         itemStart.addActionListener(new ActionListener() {
@@ -140,46 +140,54 @@ public class UI extends JFrame {
         menuBill.add(itemWeekBill);
         menuBill.add(itemMonthBill);
 
-        itemRatesSetting = new JMenuItem("费率设置");
-        itemRatesSetting.addActionListener(new ActionListener() {
+        itemSettings = new JMenuItem("配置空调");
+        itemSettings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UI_RatesSetting();
+                new UI_Settings();
             }
         });
-        itemModeSetting = new JMenuItem("模式设置");
-        itemModeSetting.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_ModeSetting();
-            }
-        });
-        itemAlgorithmSetting = new JMenuItem("调度算法设置");
-        itemAlgorithmSetting.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_AlgorithmSetting();
-            }
-        });
-        itemRefreshSetting = new JMenuItem("刷新频率设置");
-        itemRefreshSetting.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_RefreshSetting();
-            }
-        });
-        itemRoomNoSetting = new JMenuItem("房间数量设置");
-        itemRoomNoSetting.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_RoomNoSetting();
-            }
-        });
-        menuSettings.add(itemRatesSetting);
-        menuSettings.add(itemModeSetting);
-        menuSettings.add(itemAlgorithmSetting);
-        menuSettings.add(itemRefreshSetting);
-        menuSettings.add(itemRoomNoSetting);
+        menuSettings.add(itemSettings);
+//        itemRatesSetting = new JMenuItem("费率设置");
+//        itemRatesSetting.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_RatesSetting();
+//            }
+//        });
+//        itemModeSetting = new JMenuItem("模式设置");
+//        itemModeSetting.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_ModeSetting();
+//            }
+//        });
+//        itemAlgorithmSetting = new JMenuItem("调度算法设置");
+//        itemAlgorithmSetting.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_AlgorithmSetting();
+//            }
+//        });
+//        itemRefreshSetting = new JMenuItem("刷新频率设置");
+//        itemRefreshSetting.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_RefreshSetting();
+//            }
+//        });
+//        itemRoomNoSetting = new JMenuItem("房间数量设置");
+//        itemRoomNoSetting.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_RoomNoSetting();
+//            }
+//        });
+//        menuSettings.add(itemRatesSetting);
+//        menuSettings.add(itemModeSetting);
+//        menuSettings.add(itemAlgorithmSetting);
+//        menuSettings.add(itemRefreshSetting);
+//        menuSettings.add(itemRoomNoSetting);
 
         itemViewStatus = new JMenuItem("查看从机状态");
         itemViewStatus.addActionListener(new ActionListener() {
@@ -198,22 +206,22 @@ public class UI extends JFrame {
         menuView.add(itemViewStatus);
         menuView.add(itemViewErrors);
 
-        itemAddAccount = new JMenuItem("添加账户");
-        itemAddAccount.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_ViewErrors();
-            }
-        });
-        itemSetAccount = new JMenuItem("管理账户");
-        itemSetAccount.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_ViewErrors();
-            }
-        });
-        menuAccount.add(itemAddAccount);
-        menuAccount.add(itemSetAccount);
+//        itemAddAccount = new JMenuItem("添加账户");
+//        itemAddAccount.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_ViewErrors();
+//            }
+//        });
+//        itemSetAccount = new JMenuItem("管理账户");
+//        itemSetAccount.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_ViewErrors();
+//            }
+//        });
+//        menuAccount.add(itemAddAccount);
+//        menuAccount.add(itemSetAccount);
 
 
         menuBar.add(menuPower);
@@ -221,7 +229,7 @@ public class UI extends JFrame {
         menuBar.add(menuBill);
         menuBar.add(menuSettings);
         menuBar.add(menuView);
-        menuBar.add(menuAccount);
+//        menuBar.add(menuAccount);
 
 
         setJMenuBar(menuBar);

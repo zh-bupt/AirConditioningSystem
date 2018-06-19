@@ -15,8 +15,8 @@ public class RoomState {
 
     public RoomState(JSONObject jsonObject, String roomId) throws JSONException {
         this.roomId = roomId;
-        this.currentTemperature = jsonObject.getInt("current_tmp");
-        this.targetTemperature = jsonObject.getInt("target_tmp");
+        this.currentTemperature = jsonObject.getInt("current_temp");
+        this.targetTemperature = jsonObject.getInt("target_temp");
         this.wind_power = jsonObject.getString("wind_power");
     }
 

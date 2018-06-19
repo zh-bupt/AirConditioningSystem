@@ -61,7 +61,7 @@ public class CustomerManager implements Observer {
                                 TCPServer.getInstance().getMode());
                         // 添加账单
                         BillManager.getInstance().addBill(customer.getRoom_id());
-                        TCPServer.getInstance().sendData(socket,"0031{\"type\":\"state_query\",\"seq\":0}");
+//                        TCPServer.getInstance().sendData(socket,"0031{\"type\":\"state_query\",\"seq\":0}");
                         // 记录从机开机时间
                         Slave slave = new Slave(
                                 customer.getRoom_id(),
@@ -163,6 +163,7 @@ public class CustomerManager implements Observer {
                         map.put("seq", billSeq);
                         map.put("power", power);
                         map.put("money", cost);
+                        map.put("mode", TCPServer.getInstance().getMode());
                         String json = new JSONObject(map).toString();
                         TCPServer.getInstance().sendData(s, json);
                     }
