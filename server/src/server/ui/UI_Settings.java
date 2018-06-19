@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class UI_Settings extends JFrame implements ActionListener{
+public class UI_Settings extends JFrame {
     private JLabel label_mode;
     private JRadioButton r1,r2;
     private ButtonGroup bg;
@@ -22,6 +22,39 @@ public class UI_Settings extends JFrame implements ActionListener{
     private JTextField textField_price;
 
     private JLabel label_power,label_power_low,label_power_medium,label_power_high;
+
+    public String getModeSelected(){
+        if(r1.isSelected()){
+            return "winter";
+        }else if(r2.isSelected()){
+            return "summer";
+        }
+        return null;
+    }
+    public String getTextField_bill() {
+        return textField_bill.getText();
+    }
+
+    public String getTextField_status() {
+        return textField_status.getText();
+    }
+
+    public String getTextField_price() {
+        return textField_price.getText();
+    }
+
+    public String getTextField_power_low() {
+        return textField_power_low.getText();
+    }
+
+    public String getTextField_power_medium() {
+        return textField_power_medium.getText();
+    }
+
+    public String getTextField_power_high() {
+        return textField_power_high.getText();
+    }
+
     private JTextField textField_power_low,textField_power_medium,textField_power_high;
 
     private JButton button1;
@@ -89,15 +122,30 @@ public class UI_Settings extends JFrame implements ActionListener{
 
         button1 = new JButton("设置");
         button1.setBounds(100,240,80,30);
-        button1.addActionListener(this);
+
         this.add(button1);
 
         this.setLayout(null);
 
     }
 
-    public void actionPerformed(ActionEvent e){
-        JOptionPane.showMessageDialog(this,"设置成功！");
+    public void refreshUI(String mode,float price,float low,float medium,float high,int query_interval,int bill_send_interval){
+        r1.setSelected(mode=="summer");
+        r2.setSelected(mode=="winter");
+        textField_price.setText(String.valueOf(price));
+        textField_power_low.setText(String.valueOf(low));
+        textField_power_medium.setText(String.valueOf(medium));
+        textField_power_high.setText(String.valueOf(high));
+        textField_status.setText(String.valueOf(query_interval));
+        textField_bill.setText(String.valueOf(bill_send_interval));
+    }
+
+//    public void actionPerformed(ActionEvent e){
+//        JOptionPane.showMessageDialog(this,"设置成功！");
+//    }
+
+    public void addButton1Listener(ActionListener mal) {
+        button1.addActionListener(mal);
     }
 
     public static void main(String[] args){
