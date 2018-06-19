@@ -1,0 +1,5 @@
+start times: 7
+total cost: 0.066667
+request list:
+start_time			end_time			start_temp	end_temp	target_temp	wind_power	cost	electricity
+2018-06-19 16:37:28	2018-06-19 16:37:29	30			0			22			low		0.066665		0.013333
