@@ -1,5 +1,6 @@
 package server.controller;
 
+import server.TCPServer;
 import server.manager.CustomerManager;
 import server.ui.UI;
 
@@ -11,8 +12,14 @@ import java.util.*;
 public class UI_Controller {
     private UI ui;
     private Map<Socket, String> customerMap = null;
+    TCPServer tcpServer = null;
+    Thread thread;
 
     public UI_Controller() {
+        tcpServer = TCPServer.getInstance();
+        tcpServer.init();
+        thread = new Thread(tcpServer);
+        thread.start();
         ui = UI.getInstance();
         ui.setBounds(10,10,600,450);
         ui.addPowerButtonListener(new PowerButtonListener());
@@ -52,12 +59,12 @@ public class UI_Controller {
                 ui.setRoomNo(customerMap.size());
                 ui.setRoomButton(customerMap);
                 ui.updateUI();
-                System.out.println("Inside Timer Task" + System.currentTimeMillis());
+//                System.out.println("Inside Timer Task" + System.currentTimeMillis());
             }
         };
-        System.out.println("Current time" + System.currentTimeMillis());
+//        System.out.println("Current time" + System.currentTimeMillis());
         timer.schedule(task, 1000,1000);
-        System.out.println("Current time" + System.currentTimeMillis());
+//        System.out.println("Current time" + System.currentTimeMillis());
     }
 
     class PowerButtonListener implements ActionListener {

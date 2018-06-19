@@ -2,7 +2,6 @@ package server;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import server.manager.BillManager;
 import server.manager.CustomerManager;
 import server.manager.RequestManager;
 
@@ -36,14 +35,13 @@ public class TCPServer implements Runnable {
 
     public void init() {
         JSONObject configJson = readConfig();
-        int queryInterval = 5, billSendInterval = 2, billUpdateInterval = 1;
+        int queryInterval = 5, billSendInterval = 2;
         float pprice = 5, llow = (float) 0.8, mmedium = 1, hhigh = (float) 1.3;
         String mmode = "summer";
         if (configJson != null) {
             try {
                 queryInterval = configJson.getInt("query_interval");
                 billSendInterval = configJson.getInt("bill_send_interval");
-                billUpdateInterval = configJson.getInt("bill_update_interval");
                 mmode = configJson.getString("mode");
                 pprice = configJson.getFloat("price");
                 llow = configJson.getFloat("low");
@@ -116,6 +114,7 @@ public class TCPServer implements Runnable {
 
     @Override
     public void run() {
+        init();
         try {
             ServerSocket serverSocket = new ServerSocket(6666);
             while(true) {
@@ -142,8 +141,6 @@ public class TCPServer implements Runnable {
         if (sockets.remove(socket)) {
             String room_id = CustomerManager.getInstance().removeCustomer(socket);
             RequestManager.getInstance().removeRequest(room_id);
-            // TODO 测试用, 后面要删除
-//            BillManager.getInstance().remove(room_id);
         }
     }
 
@@ -184,5 +181,9 @@ public class TCPServer implements Runnable {
 
     public float getHigh() {
         return high;
+    }
+
+    public void shutDown() {
+        for (Socket s : sockets) removeSocket(s);
     }
 }
