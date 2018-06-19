@@ -3,6 +3,7 @@ package server.ui;
 import server.controller.UI_CustomerCheck_Controller;
 import server.controller.UI_Register_Controller;
 import server.controller.UI_RoomStatus_Controller;
+import server.controller.UI_Settings_Controller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -144,7 +145,7 @@ public class UI extends JFrame {
         itemSettings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UI_Settings();
+                new UI_Settings_Controller(new UI_Settings());
             }
         });
         menuSettings.add(itemSettings);
