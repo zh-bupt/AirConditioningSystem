@@ -27,7 +27,7 @@ public class TimerSubject extends Observable {
         observerMap.put(BILL_UPDATE, BillManager.getInstance());
         observerMap.put(QUERY, CustomerManager.getInstance());
         observerMap.put(BILL_BROADCAST, CustomerManager.getInstance());
-        observerMap.put(CHECK_ALIVE, CustomerManager.getInstance());
+//        observerMap.put(CHECK_ALIVE, CustomerManager.getInstance());
         int[][] table = getScheduleTable();
         new Thread(new Runnable() {
             @Override
@@ -37,7 +37,7 @@ public class TimerSubject extends Observable {
                     if (table[0][index] == 1) notifyObserver(QUERY, "query");
                     if (table[1][index] == 1) notifyObserver(BILL_BROADCAST, "send_bill");
                     if (table[2][index] == 1) notifyObserver(BILL_UPDATE, null);
-                    if (table[3][index] == 1) notifyObserver(CHECK_ALIVE, "check_alive");
+//                    if (table[3][index] == 1) notifyObserver(CHECK_ALIVE, "check_alive");
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -50,7 +50,7 @@ public class TimerSubject extends Observable {
     }
 
     private int[][] getScheduleTable() {
-        int table[][] = new int[4][60];
+        int table[][] = new int[3][60];
         for (int i = 0; i < 60; ++i) {
             if (i % queryInterval == 0) table[0][i] = 1;
             else table[0][i] = 0;
@@ -58,8 +58,8 @@ public class TimerSubject extends Observable {
             else table[1][i] = 0;
             if (i % billUpdateInterval == 0) table[2][i] = 1;
             else table[2][i] = 0;
-            if (i % checkAliveInterval == 0) table[3][i] = 1;
-            else table[3][i] = 0;
+//            if (i % checkAliveInterval == 0) table[3][i] = 1;
+//            else table[3][i] = 0;
         }
         return table;
     }

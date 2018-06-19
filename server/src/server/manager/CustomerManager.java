@@ -19,7 +19,7 @@ public class CustomerManager implements Observer {
 
     // 当前连接在服务器上的用户的map, key为socket, value为room_id
     private Map<Socket, String> customerMap = new HashMap<>();
-    private Map<Socket, Long> sockets = new HashMap<>();
+//    private Map<Socket, Long> sockets = new HashMap<>();
     private int querySeq = 0;
     private int billSeq = 0;
     private long keepAliveInterval = 60;
@@ -69,7 +69,7 @@ public class CustomerManager implements Observer {
                         );
                         // 添加状态
                         StateManager.getInstance().addRoomState(new RoomState(customer.getRoom_id()));
-                        addSocket(socket);
+//                        addSocket(socket);
                         try {
                             new SlaveMapper().insert(slave);
                         } catch (SQLServerException e) {
@@ -170,7 +170,7 @@ public class CustomerManager implements Observer {
                     billSeq++;
                     System.out.println("Send bill info");
                 }
-                if ("check_alive".equals(type)) checkAlive();
+//                if ("check_alive".equals(type)) checkAlive();
             }
         };
 
@@ -221,25 +221,25 @@ public class CustomerManager implements Observer {
         return result;
     }
 
-    private synchronized void checkAlive() {
-        long current = System.currentTimeMillis();
-        for (Socket s : sockets.keySet()) {
-            long interval = (current - sockets.get(s).longValue()) / 1000;
-            if (interval > keepAliveInterval) {
-                try {
-                    s.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                sockets.remove(s);
-                TCPServer.getInstance().removeSocket(s);
-            }
-        }
-    }
+//    private synchronized void checkAlive() {
+//        long current = System.currentTimeMillis();
+//        for (Socket s : sockets.keySet()) {
+//            long interval = (current - sockets.get(s).longValue()) / 1000;
+//            if (interval > keepAliveInterval) {
+//                try {
+//                    s.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                sockets.remove(s);
+//                TCPServer.getInstance().removeSocket(s);
+//            }
+//        }
+//    }
 
-    private synchronized void addSocket(Socket socket) {
-        sockets.put(socket, Long.valueOf(System.currentTimeMillis()));
-    }
+//    private synchronized void addSocket(Socket socket) {
+//        sockets.put(socket, Long.valueOf(System.currentTimeMillis()));
+//    }
 
     public boolean Register(Customer customer) {
         String room_id = customer.getRoom_id();
@@ -380,9 +380,9 @@ public class CustomerManager implements Observer {
         return result;
     }
 
-    public synchronized void refreshSocket(Socket socket) {
-        if (sockets.containsKey(socket)) {
-            sockets.replace(socket, System.currentTimeMillis());
-        }
-    }
+//    public synchronized void refreshSocket(Socket socket) {
+//        if (sockets.containsKey(socket)) {
+//            sockets.replace(socket, System.currentTimeMillis());
+//        }
+//    }
 }

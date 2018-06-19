@@ -57,12 +57,12 @@ public class RequestManager {
     private void newRequest(JSONObject jsonObject, Socket socket) throws JSONException, IOException {
         PrintWriter printWriter = new PrintWriter(socket.getOutputStream());
         Request request = new Request(jsonObject, CustomerManager.getInstance().getRoomId(socket));
-        int seq = 0;
-        try {
-            seq = jsonObject.getInt("seq");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        int seq = 0;
+//        try {
+//            seq = jsonObject.getInt("seq");
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
         String ack;
         if (isValid(request)) {
             String room_id = CustomerManager.getInstance().getRoomId(socket);
@@ -70,13 +70,13 @@ public class RequestManager {
             requestHashMap.put(room_id, request);
             ack  = "{"
                     + "\"type\":\"wind_request_ack\","
-                    + "\"accept\":1,"
-                    + "\"seq\":" + Integer.toString(seq) + "}";
+                    + "\"accept\":1" + "}";
+//                    + "\"seq\":" + Integer.toString(seq) + "}";
         } else {
             ack  = "{"
                     + "\"type\":\"wind_request_ack\","
-                    + "\"accept\":0,"
-                    + "\"seq\":" + Integer.toString(seq) + "}";
+                    + "\"accept\":0" + "}";
+//                    + "\"seq\":" + Integer.toString(seq) + "}";
         }
         ack = StringUtils.getHead(ack.length()) + ack;
         printWriter.print(ack);

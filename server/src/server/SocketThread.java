@@ -28,7 +28,7 @@ public class SocketThread implements Runnable {
                 if (result == 0) continue;
                 if(result == -1) break;
                 // 收到消息, 刷新socket
-                CustomerManager.getInstance().refreshSocket(socket);
+//                CustomerManager.getInstance().refreshSocket(socket);
                 String lengthString = new String(lengthBuf);
                 try {
                     int length = Integer.parseInt(lengthString);
