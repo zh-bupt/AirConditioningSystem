@@ -1,9 +1,6 @@
 package server.ui;
 
-import server.controller.UI_CustomerCheck_Controller;
-import server.controller.UI_Register_Controller;
-import server.controller.UI_RoomStatus_Controller;
-import server.controller.UI_Settings_Controller;
+import server.controller.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,8 +13,8 @@ import java.util.Timer;
 public class UI extends JFrame {
     private static UI ui = null;
     private JMenuBar menuBar;
-    private JMenu menuBill;
-    private JMenuItem itemDayBill,itemWeekBill,itemMonthBill;
+    private JMenu menuReporter;
+    private JMenuItem itemDayReporter,itemWeekReporter,itemMonthReporter;
     private JMenu menuCustomerManager;
     private JMenuItem itemCustomerRegister,itemCustomerCheck;
     private JMenu menuSettings;
@@ -64,7 +61,7 @@ public class UI extends JFrame {
         menuBar = new JMenuBar();
         menuPower = new JMenu("电源");
         menuCustomerManager = new JMenu("住客");
-        menuBill = new JMenu("账单");
+        menuReporter = new JMenu("报表");
         menuSettings=new JMenu("设置");
         menuView = new JMenu("查看");
 //        menuAccount = new JMenu("账户");
@@ -116,30 +113,30 @@ public class UI extends JFrame {
         menuCustomerManager.add(itemCustomerRegister);
         menuCustomerManager.add(itemCustomerCheck);
 
-        itemDayBill = new JMenuItem("当日账单");
-        itemDayBill.addActionListener(new ActionListener() {
+        itemDayReporter = new JMenuItem("当日报表");
+        itemDayReporter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UI_Bill(0);
+                new UI_Reporter_Controller(new UI_Reporter(0));
             }
         });
-        itemWeekBill = new JMenuItem("当周账单");
-        itemWeekBill.addActionListener(new ActionListener() {
+        itemWeekReporter = new JMenuItem("当周报表");
+        itemWeekReporter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UI_Bill(1);
+                new UI_Reporter_Controller(new UI_Reporter(1));
             }
         });
-        itemMonthBill = new JMenuItem("当月账单");
-        itemMonthBill.addActionListener(new ActionListener() {
+        itemMonthReporter = new JMenuItem("当月报表");
+        itemMonthReporter.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UI_Bill(2);
+                new UI_Reporter_Controller(new UI_Reporter(2));
             }
         });
-        menuBill.add(itemDayBill);
-        menuBill.add(itemWeekBill);
-        menuBill.add(itemMonthBill);
+        menuReporter.add(itemDayReporter);
+        menuReporter.add(itemWeekReporter);
+        menuReporter.add(itemMonthReporter);
 
         itemSettings = new JMenuItem("配置空调");
         itemSettings.addActionListener(new ActionListener() {
@@ -227,7 +224,7 @@ public class UI extends JFrame {
 
         menuBar.add(menuPower);
         menuBar.add(menuCustomerManager);
-        menuBar.add(menuBill);
+        menuBar.add(menuReporter);
         menuBar.add(menuSettings);
         menuBar.add(menuView);
 //        menuBar.add(menuAccount);
