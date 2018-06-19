@@ -31,37 +31,73 @@ public class UI_Reporter_Controller {
                 reporter = new Reporter(ui_reporter.getTextField_roomID(),startTime,endTime);
                 billList = reporter.getBillList();
                 requestList = reporter.getRequestList();
-
-                ui_reporter.setTextArea(getBillData()+
-                        "\n\n"+getRequestData()+
-                        "\n\n开关次数:"+reporter.getStartTimes()+
-                        "\n\n总费用:"+reporter.getTotalCost());
+                String column[]={"创建时间","用电量","费用"};
+                ui_reporter.setTable_bill(getBillData(),column);
+                String column1[]={"开始时间","结束时间","开始温度","结束温度","目标温度","风速","用电量","电费"};
+                ui_reporter.setTable_request(getRequestData(),column1);
+                ui_reporter.setLabel_startTimes("开关次数："+reporter.getStartTimes());
+                ui_reporter.setLabel_allFees("总费用:"+reporter.getTotalCost());
             } catch (Exception ee){
                 JOptionPane.showMessageDialog(ui_reporter,"请检查输入错误！");
             }
         }
     }
 
-    private String getBillData(){
-        String billData="所有账单：";
-        billData = billData+"\n创建时间"+"\t用电量"+"\t费用";
+//    private String getBillData(){
+//
+//        String billData="所有账单：";
+//        billData = billData+"\n创建时间"+"\t用电量"+"\t费用";
+//        ListIterator<Bill> itr=billList.listIterator();
+//        while(itr.hasNext()){
+//            Bill bill1 = itr.next();
+//            billData = billData+"\n"+bill1.getCreateTime()+"\t"+bill1.getElectricity()+"\t"+bill1.getCost();
+//        }
+//        return billData;
+//    }
+
+//    private String getRequestData(){
+//        String requestData="所有请求：";
+//        requestData = requestData+"\n开始时间"+"\t结束时间"+"\t开始温度"+"\t结束温度"+"\t目标温度"+"\t风速"+"\t用电量"+"\t电费";
+//        ListIterator<Request> itr=requestList.listIterator();
+//        while(itr.hasNext()){
+//            Request request1 = itr.next();
+//            requestData = requestData+"\n"+request1.getStartTime()+"\t"+request1.getStopTime()+"\t"+request1.getStartTemp()
+//                    +"\t"+request1.getStopTime()+"\t"+request1.getTargetTemp()+"\t"+request1.getWindPower()+"\t"+request1.getElectricity()
+//                    +"\t"+request1.getCost();
+//        }
+//        return requestData;
+//    }
+
+    private String[][] getBillData(){
+        String billData[][] = new String[billList.size()][3];
+        int i=0;
         ListIterator<Bill> itr=billList.listIterator();
         while(itr.hasNext()){
             Bill bill1 = itr.next();
-            billData = billData+"\n"+bill1.getCreateTime()+"\t"+bill1.getElectricity()+"\t"+bill1.getCost();
+            billData[i][0]=String.valueOf(bill1.getCreateTime());
+            billData[i][1]=String.valueOf(bill1.getElectricity());
+            billData[i][2]=String.valueOf(bill1.getCost());
+            i++;
         }
         return billData;
     }
 
-    private String getRequestData(){
-        String requestData="所有请求：";
-        requestData = requestData+"\n开始时间"+"\t结束时间"+"\t开始温度"+"\t结束温度"+"\t目标温度"+"\t风速"+"\t用电量"+"\t电费";
+    private String[][] getRequestData(){
+        String requestData[][] = new String[billList.size()][8];
+        int i=0;
         ListIterator<Request> itr=requestList.listIterator();
         while(itr.hasNext()){
             Request request1 = itr.next();
-            requestData = requestData+"\n"+request1.getStartTime()+"\t"+request1.getStopTime()+"\t"+request1.getStartTemp()
-                    +"\t"+request1.getStopTime()+"\t"+request1.getTargetTemp()+"\t"+request1.getWindPower()+"\t"+request1.getElectricity()
-                    +"\t"+request1.getCost();
+            requestData[i][0]=String.valueOf(request1.getStartTime());
+            requestData[i][1]=String.valueOf(request1.getStopTime());
+            requestData[i][2]=String.valueOf(request1.getStartTemp());
+            requestData[i][3]=String.valueOf(request1.getStopTime());
+            requestData[i][4]=String.valueOf(request1.getTargetTemp());
+            requestData[i][5]=String.valueOf(request1.getWindPower());
+            requestData[i][6]=String.valueOf(request1.getElectricity());
+            requestData[i][7]=String.valueOf(request1.getCost());
+
+            i++;
         }
         return requestData;
     }
