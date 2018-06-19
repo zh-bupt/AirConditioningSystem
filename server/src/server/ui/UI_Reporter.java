@@ -58,9 +58,18 @@ public class UI_Reporter extends JFrame {
         button2 = new JButton("导出");
         button2.setBounds(200,10,50,20);
 
-        area.setBounds(10,50, 280,210);
+//        area.setBounds(10,50, 280,210);
+
+        JScrollPane scrollableTextArea = new JScrollPane(area);
+
+        scrollableTextArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollableTextArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollableTextArea.setBounds(10,50,280,210);
+        this.add(scrollableTextArea);
+
+
         this.add(roomNoLabel);
-        this.add(area);
+//        this.add(area);
         this.add(textField_roomID);
         this.add(button1);
         this.add(button2);
