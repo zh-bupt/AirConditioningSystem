@@ -40,7 +40,13 @@ public class UI_CustomerCheck extends JFrame {
 
         this.add(l1);this.add(comboBox1);
         this.add(l2);
-        this.add(textArea);
+//        this.add(textArea);
+        JScrollPane scrollableTextArea = new JScrollPane(textArea);
+
+        scrollableTextArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollableTextArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollableTextArea.setBounds(50,70,200,150);
+        this.add(scrollableTextArea);
         button1 = new JButton("结账离开");
         button1.setBounds(100,230,80,30);
         this.add(button1);
