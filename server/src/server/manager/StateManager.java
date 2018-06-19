@@ -35,6 +35,11 @@ public class StateManager {
         return state;
     }
 
+    public void addRoomState(RoomState state) {
+        String room_id = state.getRoomId();
+        if (!stateMap.containsKey(room_id)) stateMap.put(room_id, state);
+    }
+
     /*
      * @Description getStateMap 返回当前连接的所有房间的状态
      * @Param
@@ -52,4 +57,5 @@ public class StateManager {
     public RoomState getState(String room_id) {
         return stateMap.get(room_id);
     }
+
 }

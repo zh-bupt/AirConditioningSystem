@@ -4,10 +4,7 @@ import com.microsoft.sqlserver.jdbc.SQLServerException;
 import org.json.JSONObject;
 import server.*;
 import server.mapper.SlaveMapper;
-import server.simpleclass.Bill;
-import server.simpleclass.Customer;
-import server.simpleclass.Request;
-import server.simpleclass.Slave;
+import server.simpleclass.*;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -64,11 +61,14 @@ public class CustomerManager implements Observer {
                                 TCPServer.getInstance().getMode());
                         // 添加账单
                         BillManager.getInstance().addBill(customer.getRoom_id());
+                        TCPServer.getInstance().sendData(socket,"0031{\"type\":\"state_query\",\"seq\":0}");
                         // 记录从机开机时间
                         Slave slave = new Slave(
                                 customer.getRoom_id(),
                                 new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())
                         );
+                        // 添加状态
+                        StateManager.getInstance().addRoomState(new RoomState(customer.getRoom_id()));
                         addSocket(socket);
                         try {
                             new SlaveMapper().insert(slave);
@@ -87,6 +87,8 @@ public class CustomerManager implements Observer {
                     ack = StringUtils.getHead(ack.length()) + ack;
                     printWriter.print(ack);
                     printWriter.flush();
+//                    printWriter.print("0031{\"type\":\"state_query\",\"seq\":0}");
+//                    printWriter.flush();
                     System.out.println(ack);
                 } catch (IOException e) {
                     e.printStackTrace();

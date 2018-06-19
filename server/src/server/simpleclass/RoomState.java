@@ -20,6 +20,13 @@ public class RoomState {
         this.wind_power = jsonObject.getString("wind_power");
     }
 
+    public RoomState(String roomId) {
+        this.roomId = roomId;
+        this.currentTemperature = 0;
+        this.targetTemperature = 0;
+        this.wind_power = "low";
+    }
+
     public int getCurrentTemperature() {
         return currentTemperature;
     }
