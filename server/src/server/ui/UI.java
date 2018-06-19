@@ -187,22 +187,22 @@ public class UI extends JFrame {
 //        menuSettings.add(itemRefreshSetting);
 //        menuSettings.add(itemRoomNoSetting);
 
-        itemViewStatus = new JMenuItem("查看从机状态");
-        itemViewStatus.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_ViewStatus();
-            }
-        });
-        itemViewErrors = new JMenuItem("查看从机故障");
-        itemViewErrors.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new UI_ViewErrors();
-            }
-        });
-        menuView.add(itemViewStatus);
-        menuView.add(itemViewErrors);
+//        itemViewStatus = new JMenuItem("查看从机状态");
+//        itemViewStatus.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_ViewStatus();
+//            }
+//        });
+//        itemViewErrors = new JMenuItem("查看从机故障");
+//        itemViewErrors.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                new UI_ViewErrors();
+//            }
+//        });
+//        menuView.add(itemViewStatus);
+//        menuView.add(itemViewErrors);
 
 //        itemAddAccount = new JMenuItem("添加账户");
 //        itemAddAccount.addActionListener(new ActionListener() {
@@ -226,7 +226,7 @@ public class UI extends JFrame {
         menuBar.add(menuCustomerManager);
         menuBar.add(menuReporter);
         menuBar.add(menuSettings);
-        menuBar.add(menuView);
+//        menuBar.add(menuView);
 //        menuBar.add(menuAccount);
 
 
