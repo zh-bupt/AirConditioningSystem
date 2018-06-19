@@ -279,7 +279,7 @@ public class CustomerManager implements Observer {
             );
             String sql2 = String.format(
                     "insert customer(room_id, id) " +
-                            "values(%s, %s)",
+                            "values('%s', %s)",
                     customer.getRoom_id(), customer.getId()
             );
             ps1 = connection.prepareStatement(sql1);
