@@ -42,8 +42,13 @@ public class UI_RoomStatus extends JFrame {
 //        this.add(temperatureLabel);
 //        this.add(statusLabel);
         this.add(button1);
-        this.add(textArea);
+//        this.add(textArea);
+        JScrollPane scrollableTextArea = new JScrollPane(textArea);
 
+        scrollableTextArea.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrollableTextArea.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollableTextArea.setBounds(50,50,200,150);
+        this.add(scrollableTextArea);
         this.setLayout(null);
 
     }

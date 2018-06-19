@@ -1,5 +1,6 @@
 package server.ui;
 
+import server.controller.UI_CustomerCheck_Controller;
 import server.controller.UI_Register_Controller;
 import server.controller.UI_RoomStatus_Controller;
 
@@ -51,7 +52,7 @@ public class UI extends JFrame {
     private UI(String title){
         init(title);
         setVisible(true);
-        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
     }
 
 
@@ -107,7 +108,7 @@ public class UI extends JFrame {
         itemCustomerCheck.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new UI_Register_Controller(new UI_Register());
+                new UI_CustomerCheck_Controller(new UI_CustomerCheck());
             }
         });
 
