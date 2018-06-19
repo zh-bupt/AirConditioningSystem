@@ -12,7 +12,7 @@ public class DataBaseConnect {
 //    private static String password = "94@Docker-mssql";
 //    private static String address = "//localhost:1433";
     private static String password = "123456";
-    private static String address = "//10.206.18.237:1433";
+    private static String address = "//10.206.18.243:1433";
     private static String driver = "jdbc:sqlserver";
 
     /*
