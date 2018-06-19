@@ -105,6 +105,9 @@ public class Reporter {
         } catch (NumberFormatException e){
             total_cost = 0;
             e.printStackTrace();
+        } catch (NullPointerException e){
+            total_cost = 0;
+//            e.printStackTrace();
         }
         return total_cost;
     }
