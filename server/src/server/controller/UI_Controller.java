@@ -22,7 +22,7 @@ public class UI_Controller {
         thread.start();
         ui = UI.getInstance();
         ui.setBounds(10,10,600,450);
-        ui.addPowerButtonListener(new PowerButtonListener());
+//        ui.addPowerButtonListener(new PowerButtonListener());
         if(!CustomerManager.getInstance().getCustomerMap().isEmpty())
         {
             customerMap = CustomerManager.getInstance().getCustomerMap();
@@ -34,11 +34,11 @@ public class UI_Controller {
             {
                 customerMap.put(new Socket(), Integer.toString(i));
             }
-            System.out.println("error");
+//            System.out.println("error");
         }
         ui.setRoomButton(customerMap);
 
-        System.out.println(customerMap.size());
+//        System.out.println(customerMap.size());
         ui.setRoomNo(customerMap.size());
 
         final int[] i = {1};
@@ -67,19 +67,19 @@ public class UI_Controller {
 //        System.out.println("Current time" + System.currentTimeMillis());
     }
 
-    class PowerButtonListener implements ActionListener {
-        public void actionPerformed(ActionEvent e) {
-            if (ui.getPowerButtonText()=="打开电源"){
-                ui.setPower(1);
-                ui.updateUI();
-            }
-            else if(ui.getPowerButtonText()=="关闭电源")
-            {
-                ui.setPower(0);
-                ui.updateUI();
-            }
-        }
-    }
+//    class PowerButtonListener implements ActionListener {
+//        public void actionPerformed(ActionEvent e) {
+//            if (ui.getPowerButtonText()=="打开电源"){
+//                ui.setPower(1);
+//                ui.updateUI();
+//            }
+//            else if(ui.getPowerButtonText()=="关闭电源")
+//            {
+//                ui.setPower(0);
+//                ui.updateUI();
+//            }
+//        }
+//    }
 
     public static void main(String[] args){
         UI_Controller ui_con = new UI_Controller();

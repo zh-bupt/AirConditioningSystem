@@ -28,7 +28,7 @@ public class UI extends JFrame {
     private JPanel p;
     private GridLayout glayout;
 
-    private JButton powerButton = new JButton("打开电源");;
+//    private JButton powerButton = new JButton("打开电源");;
     private int power = 0;
     private int roomNo = 20;
     private Map<Socket, String> customerMap = new HashMap<>();
@@ -59,41 +59,41 @@ public class UI extends JFrame {
     void init(String title){
         setTitle(title);
         menuBar = new JMenuBar();
-        menuPower = new JMenu("电源");
+//        menuPower = new JMenu("电源");
         menuCustomerManager = new JMenu("住客");
         menuReporter = new JMenu("报表");
         menuSettings=new JMenu("设置");
         menuView = new JMenu("查看");
 //        menuAccount = new JMenu("账户");
 
-        itemStart = new JMenuItem("开机");
-        itemStart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                power =1;
-                changePowerItem();
-            }
-        });
-        itemShutDown = new JMenuItem("关机");
-        itemShutDown.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                power =0;
-                changePowerItem();
-            }
-        });
-        itemRestart = new JMenuItem("重启");
-        itemRestart.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                power =1;
-                changePowerItem();
-            }
-        });
+//        itemStart = new JMenuItem("开机");
+//        itemStart.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                power =1;
+//                changePowerItem();
+//            }
+//        });
+//        itemShutDown = new JMenuItem("关机");
+//        itemShutDown.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                power =0;
+//                changePowerItem();
+//            }
+//        });
+//        itemRestart = new JMenuItem("重启");
+//        itemRestart.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                power =1;
+//                changePowerItem();
+//            }
+//        });
 
-        menuPower.add(itemStart);
-        menuPower.add(itemShutDown);
-        menuPower.add(itemRestart);
+//        menuPower.add(itemStart);
+//        menuPower.add(itemShutDown);
+//        menuPower.add(itemRestart);
 
         itemCustomerRegister = new JMenuItem("入住登记");
         itemCustomerRegister.addActionListener(new ActionListener() {
@@ -222,7 +222,7 @@ public class UI extends JFrame {
 //        menuAccount.add(itemSetAccount);
 
 
-        menuBar.add(menuPower);
+//        menuBar.add(menuPower);
         menuBar.add(menuCustomerManager);
         menuBar.add(menuReporter);
         menuBar.add(menuSettings);
@@ -234,27 +234,27 @@ public class UI extends JFrame {
         refreshUI();
     }
 
-    public void addPowerButtonListener(ActionListener mal) {
-        powerButton.addActionListener(mal);
-    }
-    public String getPowerButtonText(){
-        return powerButton.getText();
-    }
+//    public void addPowerButtonListener(ActionListener mal) {
+//        powerButton.addActionListener(mal);
+//    }
+//    public String getPowerButtonText(){
+//        return powerButton.getText();
+//    }
 
     private void refreshUI(){
 
         glayout = new GridLayout(0,4,5,3);
         p = new JPanel(glayout);
-        if(this.power==0){
-            powerButton.setText("打开电源");
-            powerButton.setBackground(Color.GREEN);
-        }else{
-            powerButton.setText("关闭电源");
-            powerButton.setBackground(Color.RED);
-        }
-        powerButton.setOpaque(true);
-        powerButton.setBorderPainted(false);
-        p.add(powerButton);
+//        if(this.power==0){
+//            powerButton.setText("打开电源");
+//            powerButton.setBackground(Color.GREEN);
+//        }else{
+//            powerButton.setText("关闭电源");
+//            powerButton.setBackground(Color.RED);
+//        }
+//        powerButton.setOpaque(true);
+//        powerButton.setBorderPainted(false);
+//        p.add(powerButton);
         p.add(new JLabel(""));
         p.add(new JLabel(""));
         p.add(new JLabel(""));
@@ -277,7 +277,7 @@ public class UI extends JFrame {
             p.add(t[i]);
             i++;
         }
-        changePowerItem();
+//        changePowerItem();
         p.add(new JLabel("欢迎来到中央空调管理系统！"));
         getContentPane().add(p,BorderLayout.CENTER);
 
@@ -292,21 +292,21 @@ public class UI extends JFrame {
         ui.p.repaint();
     }
 
-    private void changePowerItem(){
-        if(power==0){
-            itemStart.setEnabled(true);
-            itemShutDown.setEnabled(false);
-            itemRestart.setEnabled(true);
-            powerButton.setText("打开电源");
-            powerButton.setBackground(Color.green);
-        }else if(power==1){
-            itemStart.setEnabled(false);
-            itemShutDown.setEnabled(true);
-            itemRestart.setEnabled(true);
-            powerButton.setText("关闭电源");
-            powerButton.setBackground(Color.red);
-        }
-    }
+//    private void changePowerItem(){
+//        if(power==0){
+//            itemStart.setEnabled(true);
+//            itemShutDown.setEnabled(false);
+//            itemRestart.setEnabled(true);
+//            powerButton.setText("打开电源");
+//            powerButton.setBackground(Color.green);
+//        }else if(power==1){
+//            itemStart.setEnabled(false);
+//            itemShutDown.setEnabled(true);
+//            itemRestart.setEnabled(true);
+//            powerButton.setText("关闭电源");
+//            powerButton.setBackground(Color.red);
+//        }
+//    }
 
     public static void main(String[] args){
         UI ui = UI.getInstance();

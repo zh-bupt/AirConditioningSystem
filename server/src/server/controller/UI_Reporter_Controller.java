@@ -39,6 +39,7 @@ public class UI_Reporter_Controller {
                 ui_reporter.setLabel_allFees("总费用:"+reporter.getTotalCost());
             } catch (Exception ee){
                 JOptionPane.showMessageDialog(ui_reporter,"请检查输入错误！");
+                ee.printStackTrace();
             }
         }
     }
@@ -83,7 +84,7 @@ public class UI_Reporter_Controller {
     }
 
     private String[][] getRequestData(){
-        String requestData[][] = new String[billList.size()][8];
+        String requestData[][] = new String[requestList.size()][8];
         int i=0;
         ListIterator<Request> itr=requestList.listIterator();
         while(itr.hasNext()){
@@ -116,6 +117,7 @@ public class UI_Reporter_Controller {
                 }
             } catch (Exception ee){
                 JOptionPane.showMessageDialog(ui_reporter,"请检查输入错误！");
+                ee.printStackTrace();
             }
         }
     }
