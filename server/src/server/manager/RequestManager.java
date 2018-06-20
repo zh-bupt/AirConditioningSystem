@@ -64,9 +64,9 @@ public class RequestManager {
 //            e.printStackTrace();
 //        }
         String ack;
+        String room_id = CustomerManager.getInstance().getRoomId(socket);
+        if (requestHashMap.containsKey(room_id)) removeRequest(room_id);
         if (isValid(request)) {
-            String room_id = CustomerManager.getInstance().getRoomId(socket);
-            if (requestHashMap.containsKey(room_id)) removeRequest(room_id);
             requestHashMap.put(room_id, request);
             ack  = "{"
                     + "\"type\":\"wind_request_ack\","
